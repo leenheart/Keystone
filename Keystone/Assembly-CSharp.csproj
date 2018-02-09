@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Camera.cs" />
      <Compile Include="Assets\Manager.cs" />
      <Compile Include="Assets\Playeur.cs" />
  <Reference Include="UnityEngine.UI">

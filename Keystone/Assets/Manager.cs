@@ -15,5 +15,9 @@ public class Manager : MonoBehaviour {
         {
             Instantiate(Resources.Load("Playeur"), Vector3.zero + Vector3.up * 5, Quaternion.identity);
         }
-	}
+        if (Input.GetKeyDown(KeyCode.G))
+        { 
+            Instantiate(Resources.Load("Dec"), Vector3.zero + Vector3.left * Random.Range(-25.0f, 25.0f) + Vector3.forward * Random.Range(-25.0f, 25.0f), Quaternion.identity);
+        }
+    }
 }
