@@ -6,33 +6,33 @@ public class Camera : MonoBehaviour {
 
     private Transform _this;
     public Vector3 dir;
+    public int speed;
 
 	// Use this for initialization
 	void Start () {
         _this = this.gameObject.GetComponent<Transform>();
          dir = Vector3.zero;
+        speed = 5;
     }
 	
 	// Update is called once per frame
-	void Update () {
-        dir = Vector3.zero;
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+    void Update()
+    {
+        if (Input.GetKey(KeyCode.RightArrow))
         {
-            dir = Vector3.left;
+            transform.Translate(new Vector3(speed * Time.deltaTime, 0, 0));
         }
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.LeftArrow))
         {
-            dir = Vector3.right;
+            transform.Translate(new Vector3(-speed * Time.deltaTime, 0, 0));
         }
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.DownArrow))
         {
-            dir = Vector3.forward;
+            transform.Translate(new Vector3(0, 0,-speed * Time.deltaTime));
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKey(KeyCode.UpArrow))
         {
-            dir = Vector3.back;
+            transform.Translate(new Vector3(0, 0,speed * Time.deltaTime));
         }
-
-        _this.position += dir * Time.deltaTime * 5;
     }
 }
