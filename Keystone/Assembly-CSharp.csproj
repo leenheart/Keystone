@@ -54,7 +54,9 @@
      <Compile Include="Assets\Camera.cs" />
      <Compile Include="Assets\Fractal.cs" />
      <Compile Include="Assets\Generation.cs" />
+     <Compile Include="Assets\inGame.cs" />
      <Compile Include="Assets\Manager.cs" />
+     <Compile Include="Assets\Personnage.cs" />
      <Compile Include="Assets\Resources\Playeur.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 114311335516987752}
   - component: {fileID: 33893746367786108}
   - component: {fileID: 23471884250531662}
+  - component: {fileID: 64724519982419612}
   m_Layer: 0
   m_Name: MapGeneration
   m_TagString: Untagged
@@ -83,6 +84,20 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1090682179074452}
   m_Mesh: {fileID: 0}
+--- !u!64 &64724519982419612
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1090682179074452}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Convex: 0
+  m_InflateMesh: 0
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 0}
 --- !u!114 &114311335516987752
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -97,6 +112,6 @@ MonoBehaviour:
   surfaceBaseX: 6
   sizeMapX: 30
   sizeMapY: 40
-  fluctuation: 9
+  fluctuation: 7
   cellSize: 1
-  nbSmooth: 2
+  nbSmooth: 3

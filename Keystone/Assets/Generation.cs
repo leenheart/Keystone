@@ -180,6 +180,8 @@ public class Generation : MonoBehaviour {
         mesh.RecalculateNormals();
 
         transform.GetComponent<MeshCollider>().sharedMesh = mesh;
+
+        transform.Translate(new Vector3(-sizeMapX/2, 0, -sizeMapY / 2));
     }
 	
 	// Update is called once per frame
