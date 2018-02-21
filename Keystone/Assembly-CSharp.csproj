@@ -51,13 +51,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Camera.cs" />
-     <Compile Include="Assets\Fractal.cs" />
-     <Compile Include="Assets\Generation.cs" />
+     <Compile Include="Assets\Caméra\Camera.cs" />
+     <Compile Include="Assets\Génération map\Fractal.cs" />
+     <Compile Include="Assets\Génération map\Generation.cs" />
      <Compile Include="Assets\inGame.cs" />
      <Compile Include="Assets\Manager.cs" />
      <Compile Include="Assets\Personnage.cs" />
-     <Compile Include="Assets\Resources\Playeur.cs" />
+     <Compile Include="Assets\Player.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

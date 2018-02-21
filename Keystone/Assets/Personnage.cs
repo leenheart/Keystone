@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Personnage : MonoBehaviour
+public class Personnage : MonoBehaviour
 {
 
     private string name;
@@ -12,9 +12,9 @@ public abstract class Personnage : MonoBehaviour
     private int nbMvt;
     private int attack;
     private int armure;
+    private string role;
 
-    // Use this for initialization
-    void Start()
+    public Personnage()
     {
         name = "Personnage";
         hp = 1000;
@@ -23,6 +23,12 @@ public abstract class Personnage : MonoBehaviour
         nbMvt = 5;
         attack = 100;
         armure = 5;
+        role = "attaquant";
+    }
+
+    // Use this for initialization
+    void Start()
+    {
     }
 
     // Update is called once per frame
@@ -31,19 +37,33 @@ public abstract class Personnage : MonoBehaviour
 
     }
 
-    void Move(Vector2 movement)
+    public void Move(Vector2 movement)
     {
         transform.Translate(movement * Time.deltaTime);
     }
 
-    void TakeDommage(int dommage)
+    public void TakeDommage(int dommage)
     {
         hp -= dommage * armure / 100;
+        if (hp <= 0)
+        {
+            Die();
+        }
     }
 
-    int Attack()
+    public int Attack()
     {
         return attack;
+    }
+
+    public void Die()
+    {
+        //FIXME
+    }
+
+    public string GetRole()
+    {
+        return role;
     }
 
 }

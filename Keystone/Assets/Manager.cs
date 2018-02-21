@@ -32,18 +32,6 @@ public class Manager : MonoBehaviour {
         }
         else if (scene == "inGame")
         {
-            //spawn map
-            //spawn personnage 
-
-
-            //defenseur  = choisi x action il a 15 s // si lets go alors fin timer
-            //toutes les actoins du defenseur // si quelqun meurt fin
-            //attaquant  = choisi x action il a 15 s // si lets go alors fin timer
-            //toutes les actoins du attaquant // si quelqun meurt fin
-
-            //turn ++ et on recommence
-
-
 
         }
         if (Input.GetKeyDown(KeyCode.A))
