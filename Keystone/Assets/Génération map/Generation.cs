@@ -24,8 +24,18 @@ public class Generation : MonoBehaviour {
     {
         mesh.Clear();
         mesh.vertices = vertices;
+
         mesh.triangles = triangles;
         mesh.RecalculateNormals();
+    }
+
+    void MakeSurface(int y, int x, ref int t, ref int v)
+    {
+        // Debug.Log(x + " " + y + "  " + map[x, y] + " " + v);
+        triangles[t] = v;
+        triangles[t + 1] = triangles[t + 4] = v + 1;
+        triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1);
+        triangles[t + 5] = v + (sizeMapY + 1) + 1;
     }
 
     void MakeFaceY(int y, int x, ref int t, ref int v, int[,] tab )
@@ -49,9 +59,17 @@ public class Generation : MonoBehaviour {
         }
     }
 
-    void MakeFaceX(int y, int x, ref int t, ref int v, int[,] tab)
+    void MakeFaceX(int y, int x, ref int t, ref int v, int[,] tab, int makeTest)
     {
-        if (tab[x -1, y] == 0)
+        if (makeTest == 1)
+        {
+            t += 6;
+            triangles[t] = v;
+            triangles[t + 2] = triangles[t + 3] = v + 1;
+            triangles[t + 1] = triangles[t + 4] = v + (sizeMapY + 1) * (sizeMapX + 1);
+            triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1;
+        }
+       else if (tab[x -1, y] == 0)
         {
             t += 6;
             triangles[t] = v;
@@ -60,7 +78,15 @@ public class Generation : MonoBehaviour {
             triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1;
         }
 
-        if (tab[x +1 , y] == 0)
+        if (makeTest == 2)
+        {
+            t += 6;
+            triangles[t] = v + sizeMapY + 1;
+            triangles[t + 1] = triangles[t + 4] = v + 1 + sizeMapY + 1;
+            triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1) * (sizeMapX + 1) + sizeMapY + 1;
+            triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1 + sizeMapY + 1;
+        }
+           else if (tab[x +1 , y] == 0)
         {
             t += 6;
             triangles[t] = v + sizeMapY + 1;
@@ -109,6 +135,11 @@ public class Generation : MonoBehaviour {
                 map[x, y] = 0;
             }
         }
+        for (int z = 0; z < sizeMapZ; z++)
+        {
+            underMap[z] = new int[sizeMapX, sizeMapY];
+        }
+
         for (int x = 0; x < 5; x++)
         {
             for (int y = sizeMapY / 2 - surfaceBaseX / 2; y < sizeMapY / 2 + surfaceBaseX / 2; y++)
@@ -195,36 +226,79 @@ public class Generation : MonoBehaviour {
 
         PrintTab(map);
 
-        for (int i = 0; i < sizeMapZ; i++)
+        for (int x = 0; x < sizeMapX; x++)
         {
-            underMap[i] = map;
+            for (int y = 0; y < sizeMapY; y++)
+            {
+                underMap[0][x, y] = map[x, y];
+            }
         }
 
-        for (int z = 0; z < sizeMapZ-1; z++)
+        for (int z = 1; z < sizeMapZ; z++)
         {
+            if (z - 1 >= 0)
+            {
+
+                for (int x = 0; x < sizeMapX; x++)
+                {
+                    for (int y = 0; y < sizeMapY; y++)
+                    {
+                        underMap[z][x, y] = underMap[z - 1][x, y];
+                    }
+                }
+            }
+            int random = 0;
             for (int x = 0; x < sizeMapX; x++)
             {
                 for (int y = 0; y < sizeMapY; y++)
                 {
-                    Debug.Log(x + " " + y + " " + z);
-                    if (underMap[z][x, y] == 1 && underMap[z][x, y - 1] == 0 || underMap[z][x, y + 1] == 0)
+                    //Debug.Log(x + " " + y + " " + z);
+                    if (underMap[z][x, y] == 1 && (underMap[z][x, y - 1] == 0 || underMap[z][x, y + 1] == 0))
                     {
-                        int random = UnityEngine.Random.Range(0, 3);
-                        if (random == 1)
+                        if (x == 0 ||x == sizeMapX - 1)
+                        {
+                            random = UnityEngine.Random.Range(0, sizeMapZ - z-2);
+                        }
+                        else if (underMap[z][x+1, y] == 0 && underMap[z][x - 1, y] == 0)
+                        {
+                            random = UnityEngine.Random.Range(0, sizeMapZ - z-2);
+                        }
+                        else if (underMap[z][x + 1, y] == 0 || underMap[z][x - 1, y] == 0)
+                        {
+                            random = UnityEngine.Random.Range(0, 2 + sizeMapZ - z-4);
+                        }
+                        else if (underMap[z][x + 1, y] == 1 && underMap[z][x - 1, y] == 1)
+                        {
+                            random = UnityEngine.Random.Range(0, 6 + sizeMapZ - z-6);
+                        }
+                            if (random <= 3)
                         {
                             underMap[z][x, y] = 0;
                         }
                     }
+
+                    int sommeEntoure = 0;
+                    for (int i = -1; i < 2; i++)
+                    {
+                        for (int j = -1; j < 2; j++)
+                        {
+                            if (x + i > 0 && x + i < sizeMapX && y + j > 0 && y + j < sizeMapY)
+                            {
+                                sommeEntoure += underMap[z][x + i, y + j];
+                            }
+
+                        }
+                    }
+                    if (sommeEntoure <= 4 )
+                    {
+                        underMap[z][x, y] = 0;
+                    }
                 }
-            }
-            if (z < sizeMapZ-2)
-            {
-                underMap[z + 1] = underMap[z];
             }
         }
 
         vertices = new Vector3[(sizeMapX + 1) * (sizeMapY + 1) * (sizeMapZ + 1)];
-        Debug.Log(" ici     " + (sizeMapX + 1) * (sizeMapY + 1) * (sizeMapZ + 1));
+        //Debug.Log(" ici     " + (sizeMapX + 1) * (sizeMapY + 1) * (sizeMapZ + 1));
         triangles = new int[sizeMapX * sizeMapY * 12 * (sizeMapZ)];
 
         int v = 0;
@@ -251,51 +325,24 @@ public class Generation : MonoBehaviour {
             {
                 if (map[x, y] == 1 && x == 0)
                 {
-                    //Debug.Log(x + " " + y + "  " + map[x, y] + " " + v);
 
-                    triangles[t] = v;
-                    triangles[t + 1] = triangles[t + 4] = v + 1;
-                    triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1);
-                    triangles[t + 5] = v + (sizeMapY + 1) + 1;
-
-                    t += 6;
-
-                    triangles[t] = v;
-                    triangles[t + 2] = triangles[t + 3] = v + 1;
-                    triangles[t + 1] = triangles[t + 4] = v + (sizeMapY + 1) * (sizeMapX + 1);
-                    triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1;
-
+                    MakeSurface(y, x, ref t, ref v);
+                    MakeFaceX(y, x, ref t, ref v, map, 1);
                     MakeFaceY(y, x, ref t, ref v, map);
 
                 }
                 else if (x == sizeMapX - 1 && map[x, y] == 1)
                 {
 
-                    // Debug.Log(x + " " + y + "  " + map[x, y] + " " + v);
-                    triangles[t] = v;
-                    triangles[t + 1] = triangles[t + 4] = v + 1;
-                    triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1);
-                    triangles[t + 5] = v + (sizeMapY + 1) + 1;
-
-                    t += 6;
-
-                    triangles[t] = v + sizeMapY + 1;
-                    triangles[t + 1] = triangles[t + 4] = v + 1 + sizeMapY + 1;
-                    triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1) * (sizeMapX + 1) + sizeMapY + 1;
-                    triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1 + sizeMapY + 1;
-
+                    MakeSurface(y, x, ref t, ref v);
+                    MakeFaceX(y, x, ref t, ref v, map, 2);
                     MakeFaceY(y, x, ref t, ref v, map);
                 }
                 else if (map[x, y] == 1)
                 {
-                    //Debug.Log(x + " " + y + "  " + map[x, y] + " " + v);
-                    triangles[t] = v;
-                    triangles[t + 1] = triangles[t + 4] = v + 1;
-                    triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1);
-                    triangles[t + 5] = v + (sizeMapY + 1) + 1;
-
+                    MakeSurface(y, x, ref t, ref v);
                     MakeFaceY(y, x, ref t, ref v, map);
-                    MakeFaceX(y, x, ref t, ref v, map);
+                    MakeFaceX(y, x, ref t, ref v, map,0);
                 }
                 t += 6;
 
@@ -303,11 +350,12 @@ public class Generation : MonoBehaviour {
             }
             v++;
         }
-        v += sizeMapY+1;
 
         for (int z = 1; z < sizeMapZ; z++)
         {
-            PrintTab(underMap[z]);
+            v += sizeMapY+1;
+            Debug.Log(z);
+            PrintTab( underMap[z]);
             for (int x = 0; x < sizeMapX; x++)
             {
                 for (int y = 0; y < sizeMapY; y++)
@@ -316,29 +364,19 @@ public class Generation : MonoBehaviour {
                     {
                          if (underMap[z][x, y] == 1 && x == 0)
                         {
-                            t += 6;
-                            triangles[t] = v;
-                            triangles[t + 2] = triangles[t + 3] = v + 1;
-                            triangles[t + 1] = triangles[t + 4] = v + (sizeMapY + 1) * (sizeMapX + 1);
-                            triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1;
-
-                            MakeFaceY(y, x, ref t, ref v, map);
+                            MakeFaceX(y, x, ref t, ref v, underMap[z], 1);
+                            MakeFaceY(y, x, ref t, ref v, underMap[z]);
 
                         }
-                        else if (x == sizeMapX - 1 && map[x, y] == 1)
+                        else if (x == sizeMapX - 1 && underMap[z][x, y] == 1)
                         {
-                            t += 6;
-                            triangles[t] = v + sizeMapY + 1;
-                            triangles[t + 1] = triangles[t + 4] = v + 1 + sizeMapY + 1;
-                            triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1) * (sizeMapX + 1) + sizeMapY + 1;
-                            triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1 + sizeMapY + 1;
-
-                            MakeFaceY(y, x, ref t, ref v, map);
+                            MakeFaceX(y, x, ref t, ref v, underMap[z], 2);
+                            MakeFaceY(y, x, ref t, ref v, underMap[z]);
                         }
                         else if (underMap[z][x, y] == 1)
                         {
                             MakeFaceY(y, x, ref t, ref v, underMap[z]);
-                            MakeFaceX(y, x, ref t, ref v, underMap[z]);
+                            MakeFaceX(y, x, ref t, ref v, underMap[z],0);
                         }
                     }
                     v++;

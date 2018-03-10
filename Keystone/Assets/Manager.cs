@@ -34,6 +34,7 @@ public class Manager : MonoBehaviour {
         {
 
         }
+
         if (Input.GetKeyDown(KeyCode.A))
         {
             Instantiate(Resources.Load("Playeur"), Vector3.zero + Vector3.up * 5, Quaternion.identity);
