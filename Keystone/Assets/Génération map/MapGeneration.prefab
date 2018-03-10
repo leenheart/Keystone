@@ -57,7 +57,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 741eedd5d979e0544a2744a09ebf7e9f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -112,6 +112,7 @@ MonoBehaviour:
   surfaceBaseX: 6
   sizeMapX: 30
   sizeMapY: 40
+  sizeMapZ: 0
   fluctuation: 7
   cellSize: 1
   nbSmooth: 3
