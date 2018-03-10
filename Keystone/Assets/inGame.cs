@@ -19,29 +19,36 @@ public class inGame : MonoBehaviour
     public Player playerAttaquant;
     public Player playerDefender;
 
+    public Queue sauvegarde_actions;
+
+
+
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
 
         turn = 1;
 
-        finChooseAct = 35f;
+        finChooseAct = 10f;
         debutChooseAct = 5f;
         etape = "choisir actions";
         playeurTurn = "attaquant";
-        timeToChoseAct = 35f;
+        timeToChoseAct = 10f;
         timeToDoAct = 5f;
 
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
 
         if (etape == "choisir actions" && Time.time > finChooseAct /*&& bouton passé*/)
         {
+            
             etape = "actions";
             finChooseAct = Time.time + timeToChoseAct + timeToDoAct;
             debutChooseAct = Time.time + timeToDoAct;
-
+            Debug.Log(etape);
         }
 
         if (etape == "actions" && Time.time > debutChooseAct)
@@ -49,6 +56,10 @@ public class inGame : MonoBehaviour
             etape = "choisir actions";
             //Debug.Log(etape + " " + Time.time);
         }
+
+
+
+
 
     }
 
