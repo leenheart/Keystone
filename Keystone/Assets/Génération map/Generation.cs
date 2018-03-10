@@ -253,7 +253,8 @@ public class Generation : MonoBehaviour {
                 for (int y = 0; y < sizeMapY; y++)
                 {
                     //Debug.Log(x + " " + y + " " + z);
-                    if (underMap[z][x, y] == 1 && (underMap[z][x, y - 1] == 0 || underMap[z][x, y + 1] == 0))
+
+                    if ( (y == 0 || y == sizeMapY-1) || ( underMap[z][x, y] == 1 && (underMap[z][x, y - 1] == 0 || underMap[z][x, y + 1] == 0)))
                     {
                         if (x == 0 ||x == sizeMapX - 1)
                         {
