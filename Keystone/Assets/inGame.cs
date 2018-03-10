@@ -39,7 +39,6 @@ public class inGame : MonoBehaviour
         if (etape == "choisir actions" && Time.time > finChooseAct /*&& bouton passé*/)
         {
             etape = "actions";
-            Debug.Log(etape + " " + Time.time);
             finChooseAct = Time.time + timeToChoseAct + timeToDoAct;
             debutChooseAct = Time.time + timeToDoAct;
 
@@ -48,7 +47,7 @@ public class inGame : MonoBehaviour
         if (etape == "actions" && Time.time > debutChooseAct)
         {
             etape = "choisir actions";
-            Debug.Log(etape + " " + Time.time);
+            //Debug.Log(etape + " " + Time.time);
         }
 
     }

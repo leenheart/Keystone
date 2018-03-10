@@ -10,11 +10,6 @@ public class Player : NetworkBehaviour {
     public Personnage personnage;
     public inGame inGameObject;
 
-    void awake()
-    {
-        inGameObject = GameObject.FindGameObjectWithTag("inGame").GetComponent<inGame>();
-    }
-
     public Player()
     {
         pseudo = "Personnage";
@@ -23,7 +18,8 @@ public class Player : NetworkBehaviour {
 
     // Use this for initialization
     void Start () {
-
+        inGameObject = GameObject.FindGameObjectWithTag("inGame").GetComponent<inGame>();
+        personnage = new Personnage();
     }
 	
 	// Update is called once per frame
@@ -38,9 +34,9 @@ public class Player : NetworkBehaviour {
         if (inGameObject.getEtape() == "choisir actions" && inGameObject.getPlayeurTurn() == personnage.GetRole()) 
         {
             //si c a moi de jouer et que je dois choisir :
-            Debug.Log("c'est a moi de jouer !!!" + Time.time);
+            //Debug.Log("c'est a moi de jouer !!!" + Time.time);
         }
-
+        
         if (inGameObject.getEtape() == "actions" && inGameObject.getPlayeurTurn() == personnage.GetRole())
         {
             //faire toutes les actions putaain

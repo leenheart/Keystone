@@ -8,15 +8,81 @@ public class Generation : MonoBehaviour {
     public int surfaceBaseX;
     public int sizeMapX;
     public int sizeMapY;
+    public int sizeMapZ;
     public int fluctuation;
     public float cellSize;
     public int nbSmooth;
 
     private int[,] map;
+    private int[][,] underMap;
+
     private Vector3[] vertices;
     private int[] triangles;
     private Mesh mesh;
 
+    void UpdateMesh()
+    {
+        mesh.Clear();
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.RecalculateNormals();
+    }
+
+    void MakeFaceY(int y, int x, ref int t, ref int v, int[,] tab )
+    {
+        if (tab[x, y - 1] == 0)
+        {
+            t += 6;
+            triangles[t] = v;
+            triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1) * (sizeMapX + 1);
+            triangles[t + 1] = triangles[t + 4] = v + (sizeMapY + 1);
+            triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + (sizeMapY + 1);
+        }
+
+        if (tab[x, y + 1] == 0)
+        {
+            t += 6;
+            triangles[t] = v+1;
+            triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1) +1;
+            triangles[t + 1] = triangles[t + 4] = v + (sizeMapY + 1) * (sizeMapX + 1)  + 1;
+            triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + (sizeMapY + 1)+1;
+        }
+    }
+
+    void MakeFaceX(int y, int x, ref int t, ref int v, int[,] tab)
+    {
+        if (tab[x -1, y] == 0)
+        {
+            t += 6;
+            triangles[t] = v;
+            triangles[t + 2] = triangles[t + 3] = v + 1;
+            triangles[t + 1] = triangles[t + 4] = v + (sizeMapY + 1) * (sizeMapX + 1);
+            triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1;
+        }
+
+        if (tab[x +1 , y] == 0)
+        {
+            t += 6;
+            triangles[t] = v + sizeMapY + 1;
+            triangles[t + 1] = triangles[t + 4] = v + 1 + sizeMapY + 1;
+            triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1) * (sizeMapX + 1) + sizeMapY + 1;
+            triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1 + sizeMapY + 1;
+        }
+    }
+
+    void PrintTab(int[,] tab)
+    {
+        //voir le tableau dans les logs
+        for (int x = 0; x < sizeMapX; x++)
+        {
+            string s = "";
+            for (int y = 0; y < sizeMapY; y++)
+            {
+                s += tab[x, y];
+            }
+            Debug.Log(s);
+        }
+    }
 
     // Use this for initialization
     void Start()
@@ -34,6 +100,8 @@ public class Generation : MonoBehaviour {
 
         //initialization
         map = new int[sizeMapX, sizeMapY];
+        underMap = new int[sizeMapZ][,];
+
         for (int x = 0; x < sizeMapX; x++)
         {
             for (int y = 0; y < sizeMapY; y++)
@@ -125,59 +193,163 @@ public class Generation : MonoBehaviour {
             }
         }
 
-        //voir le tableau dans les logs
-        /*for (int x = 0; x < sizeMapX; x++)
-        {
-            string s = "";
-            for (int y = 0; y < sizeMapY; y++)
-            {
-                s += map[x, y];
-            }
-            Debug.Log(s);
-        }*/
+        PrintTab(map);
 
-        vertices = new Vector3[(sizeMapX + 1) * (sizeMapY + 1)];
-        triangles = new int[sizeMapX * sizeMapY * 6];
+        for (int i = 0; i < sizeMapZ; i++)
+        {
+            underMap[i] = map;
+        }
+
+        for (int z = 0; z < sizeMapZ-1; z++)
+        {
+            for (int x = 0; x < sizeMapX; x++)
+            {
+                for (int y = 0; y < sizeMapY; y++)
+                {
+                    Debug.Log(x + " " + y + " " + z);
+                    if (underMap[z][x, y] == 1 && underMap[z][x, y - 1] == 0 || underMap[z][x, y + 1] == 0)
+                    {
+                        int random = UnityEngine.Random.Range(0, 3);
+                        if (random == 1)
+                        {
+                            underMap[z][x, y] = 0;
+                        }
+                    }
+                }
+            }
+            if (z < sizeMapZ-2)
+            {
+                underMap[z + 1] = underMap[z];
+            }
+        }
+
+        vertices = new Vector3[(sizeMapX + 1) * (sizeMapY + 1) * (sizeMapZ + 1)];
+        Debug.Log(" ici     " + (sizeMapX + 1) * (sizeMapY + 1) * (sizeMapZ + 1));
+        triangles = new int[sizeMapX * sizeMapY * 12 * (sizeMapZ)];
 
         int v = 0;
         int t = 0;
 
         float vertexOffSet = cellSize * 0.5f;
 
-        for (int x = 0; x <= sizeMapX; x++)
+        for (int z = 0; z <= sizeMapZ; z++)
         {
-            for (int y = 0; y <= sizeMapY; y++)
+            for (int x = 0; x <= sizeMapX; x++)
             {
-                vertices[v] = new Vector3((x * cellSize) - vertexOffSet, 0, (y * cellSize) - vertexOffSet);
-                v++;
+                for (int y = 0; y <= sizeMapY; y++)
+                {
+                    vertices[v] = new Vector3((x * cellSize) - vertexOffSet, -z, (y * cellSize) - vertexOffSet);
+                    v++;
+                }
             }
         }
 
         v = 0;
-
         for (int x = 0; x < sizeMapX; x++)
         {
             for (int y = 0; y < sizeMapY; y++)
             {
-                if (map[x, y] == 1)
+                if (map[x, y] == 1 && x == 0)
                 {
+                    //Debug.Log(x + " " + y + "  " + map[x, y] + " " + v);
+
                     triangles[t] = v;
                     triangles[t + 1] = triangles[t + 4] = v + 1;
                     triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1);
                     triangles[t + 5] = v + (sizeMapY + 1) + 1;
+
+                    t += 6;
+
+                    triangles[t] = v;
+                    triangles[t + 2] = triangles[t + 3] = v + 1;
+                    triangles[t + 1] = triangles[t + 4] = v + (sizeMapY + 1) * (sizeMapX + 1);
+                    triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1;
+
+                    MakeFaceY(y, x, ref t, ref v, map);
+
                 }
-                v++;
+                else if (x == sizeMapX - 1 && map[x, y] == 1)
+                {
+
+                    // Debug.Log(x + " " + y + "  " + map[x, y] + " " + v);
+                    triangles[t] = v;
+                    triangles[t + 1] = triangles[t + 4] = v + 1;
+                    triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1);
+                    triangles[t + 5] = v + (sizeMapY + 1) + 1;
+
+                    t += 6;
+
+                    triangles[t] = v + sizeMapY + 1;
+                    triangles[t + 1] = triangles[t + 4] = v + 1 + sizeMapY + 1;
+                    triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1) * (sizeMapX + 1) + sizeMapY + 1;
+                    triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1 + sizeMapY + 1;
+
+                    MakeFaceY(y, x, ref t, ref v, map);
+                }
+                else if (map[x, y] == 1)
+                {
+                    //Debug.Log(x + " " + y + "  " + map[x, y] + " " + v);
+                    triangles[t] = v;
+                    triangles[t + 1] = triangles[t + 4] = v + 1;
+                    triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1);
+                    triangles[t + 5] = v + (sizeMapY + 1) + 1;
+
+                    MakeFaceY(y, x, ref t, ref v, map);
+                    MakeFaceX(y, x, ref t, ref v, map);
+                }
                 t += 6;
 
+                v++;
             }
             v++;
         }
+        v += sizeMapY+1;
 
+        for (int z = 1; z < sizeMapZ; z++)
+        {
+            PrintTab(underMap[z]);
+            for (int x = 0; x < sizeMapX; x++)
+            {
+                for (int y = 0; y < sizeMapY; y++)
+                {
+                    //if (y != 0 && y != sizeMapY - 1)
+                    {
+                         if (underMap[z][x, y] == 1 && x == 0)
+                        {
+                            t += 6;
+                            triangles[t] = v;
+                            triangles[t + 2] = triangles[t + 3] = v + 1;
+                            triangles[t + 1] = triangles[t + 4] = v + (sizeMapY + 1) * (sizeMapX + 1);
+                            triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1;
 
-        mesh.Clear();
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.RecalculateNormals();
+                            MakeFaceY(y, x, ref t, ref v, map);
+
+                        }
+                        else if (x == sizeMapX - 1 && map[x, y] == 1)
+                        {
+                            t += 6;
+                            triangles[t] = v + sizeMapY + 1;
+                            triangles[t + 1] = triangles[t + 4] = v + 1 + sizeMapY + 1;
+                            triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1) * (sizeMapX + 1) + sizeMapY + 1;
+                            triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1 + sizeMapY + 1;
+
+                            MakeFaceY(y, x, ref t, ref v, map);
+                        }
+                        else if (underMap[z][x, y] == 1)
+                        {
+                            MakeFaceY(y, x, ref t, ref v, underMap[z]);
+                            MakeFaceX(y, x, ref t, ref v, underMap[z]);
+                        }
+                    }
+                    v++;
+
+                }
+                v++;
+            }
+            
+        }
+
+        UpdateMesh();
 
         transform.GetComponent<MeshCollider>().sharedMesh = mesh;
 
