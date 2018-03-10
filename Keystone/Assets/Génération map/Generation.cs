@@ -20,13 +20,13 @@ public class Generation : MonoBehaviour {
     private int[] triangles;
     private Mesh mesh;
 
-    void UpdateMesh()
+    void UpdateMesh(Mesh m)
     {
-        mesh.Clear();
-        mesh.vertices = vertices;
+        m.Clear();
+        m.vertices = vertices;
 
-        mesh.triangles = triangles;
-        mesh.RecalculateNormals();
+        m.triangles = triangles;
+        m.RecalculateNormals();
     }
 
     void MakeSurface(int y, int x, ref int t, ref int v)
@@ -247,32 +247,32 @@ public class Generation : MonoBehaviour {
                     }
                 }
             }
-            int random = 0;
+            int rand = 0;
             for (int x = 0; x < sizeMapX; x++)
             {
                 for (int y = 0; y < sizeMapY; y++)
                 {
                     //Debug.Log(x + " " + y + " " + z);
 
-                    if ( (y == 0 || y == sizeMapY-1) || ( underMap[z][x, y] == 1 && (underMap[z][x, y - 1] == 0 || underMap[z][x, y + 1] == 0)))
+                    if ((y == 0 || y == sizeMapY - 1) || (underMap[z][x, y] == 1 && (underMap[z][x, y - 1] == 0 || underMap[z][x, y + 1] == 0)))
                     {
-                        if (x == 0 ||x == sizeMapX - 1)
+                        if (x == 0 || x == sizeMapX - 1)
                         {
-                            random = UnityEngine.Random.Range(0, sizeMapZ - z-2);
+                            rand = UnityEngine.Random.Range(0, sizeMapZ - z - 2);
                         }
-                        else if (underMap[z][x+1, y] == 0 && underMap[z][x - 1, y] == 0)
+                        else if (underMap[z][x + 1, y] == 0 && underMap[z][x - 1, y] == 0)
                         {
-                            random = UnityEngine.Random.Range(0, sizeMapZ - z-2);
+                            rand = UnityEngine.Random.Range(0, sizeMapZ - z - 2);
                         }
                         else if (underMap[z][x + 1, y] == 0 || underMap[z][x - 1, y] == 0)
                         {
-                            random = UnityEngine.Random.Range(0, 2 + sizeMapZ - z-4);
+                            rand = UnityEngine.Random.Range(0, 2 + sizeMapZ - z - 4);
                         }
                         else if (underMap[z][x + 1, y] == 1 && underMap[z][x - 1, y] == 1)
                         {
-                            random = UnityEngine.Random.Range(0, 6 + sizeMapZ - z-6);
+                            rand = UnityEngine.Random.Range(0, 6 + sizeMapZ - z - 6);
                         }
-                            if (random <= 3)
+                        if (rand <= 3)
                         {
                             underMap[z][x, y] = 0;
                         }
@@ -290,7 +290,7 @@ public class Generation : MonoBehaviour {
 
                         }
                     }
-                    if (sommeEntoure <= 4 )
+                    if (sommeEntoure <= 4)
                     {
                         underMap[z][x, y] = 0;
                     }
@@ -300,12 +300,12 @@ public class Generation : MonoBehaviour {
 
         vertices = new Vector3[(sizeMapX + 1) * (sizeMapY + 1) * (sizeMapZ + 1)];
         //Debug.Log(" ici     " + (sizeMapX + 1) * (sizeMapY + 1) * (sizeMapZ + 1));
-        triangles = new int[sizeMapX * sizeMapY * 12 * (sizeMapZ)];
+        triangles = new int[sizeMapX * sizeMapY * 24 * (sizeMapZ)];
 
         int v = 0;
         int t = 0;
 
-        float vertexOffSet = cellSize * 0.5f;
+        //float vertexOffSet = cellSize * 0.5f;
 
         for (int z = 0; z <= sizeMapZ; z++)
         {
@@ -313,7 +313,7 @@ public class Generation : MonoBehaviour {
             {
                 for (int y = 0; y <= sizeMapY; y++)
                 {
-                    vertices[v] = new Vector3((x * cellSize) - vertexOffSet, -z, (y * cellSize) - vertexOffSet);
+                    vertices[v] = new Vector3((x * cellSize) /*- vertexOffSet*/, -z, (y * cellSize) /*- vertexOffSet*/);
                     v++;
                 }
             }
@@ -343,7 +343,7 @@ public class Generation : MonoBehaviour {
                 {
                     MakeSurface(y, x, ref t, ref v);
                     MakeFaceY(y, x, ref t, ref v, map);
-                    MakeFaceX(y, x, ref t, ref v, map,0);
+                    MakeFaceX(y, x, ref t, ref v, map, 0);
                 }
                 t += 6;
 
@@ -352,18 +352,22 @@ public class Generation : MonoBehaviour {
             v++;
         }
 
+        UpdateMesh(mesh);
+
+
+
         for (int z = 1; z < sizeMapZ; z++)
         {
-            v += sizeMapY+1;
+            v += sizeMapY + 1;
             Debug.Log(z);
-            PrintTab( underMap[z]);
+            PrintTab(underMap[z]);
             for (int x = 0; x < sizeMapX; x++)
             {
                 for (int y = 0; y < sizeMapY; y++)
                 {
                     //if (y != 0 && y != sizeMapY - 1)
                     {
-                         if (underMap[z][x, y] == 1 && x == 0)
+                        if (underMap[z][x, y] == 1 && x == 0)
                         {
                             MakeFaceX(y, x, ref t, ref v, underMap[z], 1);
                             MakeFaceY(y, x, ref t, ref v, underMap[z]);
@@ -377,7 +381,7 @@ public class Generation : MonoBehaviour {
                         else if (underMap[z][x, y] == 1)
                         {
                             MakeFaceY(y, x, ref t, ref v, underMap[z]);
-                            MakeFaceX(y, x, ref t, ref v, underMap[z],0);
+                            MakeFaceX(y, x, ref t, ref v, underMap[z], 0);
                         }
                     }
                     v++;
@@ -385,14 +389,38 @@ public class Generation : MonoBehaviour {
                 }
                 v++;
             }
-            
+
         }
 
-        UpdateMesh();
+        Mesh m = GameObject.FindWithTag("UnderMap").GetComponent<MeshFilter>().mesh;
+        UpdateMesh(m);
 
         transform.GetComponent<MeshCollider>().sharedMesh = mesh;
 
-        transform.Translate(new Vector3(-sizeMapX/2, 0, -sizeMapY / 2));
+        int random = 0;
+        for (int x = 0; x < sizeMapX; x++)
+        {
+            for (int y = 0; y < sizeMapY; y++)
+            {
+                random = UnityEngine.Random.Range(0, 15);
+               if (random == 1 && map[x,y] == 1)
+                {
+                    Instantiate(Resources.Load("dec"), new Vector3(x, 0, y) , Quaternion.identity);
+                }
+            }
+        }
+
+        for (int x = 0; x < sizeMapX; x++)
+        {
+            for (int y = 0; y < sizeMapY; y++)
+            {
+                random = UnityEngine.Random.Range(0, 50);
+                if (random == 1 && map[x, y] == 1)
+                {
+                    Instantiate(Resources.Load("arbre"), new Vector3(x, 0, y), Quaternion.identity);
+                }
+            }
+        }
     }
 	
 	// Update is called once per frame

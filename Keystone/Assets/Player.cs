@@ -18,6 +18,7 @@ public class Player : NetworkBehaviour {
 
     // Use this for initialization
     void Start () {
+
         inGameObject = GameObject.FindGameObjectWithTag("inGame").GetComponent<inGame>();
         personnage = new Personnage();
     }
