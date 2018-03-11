@@ -4,4 +4,16 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: "Assets/Sc\xE9ne/menu.unity"
+    guid: b0808b4c109e6e54baefa58a020ecd9e
+  - enabled: 0
+    path: "Assets/Sc\xE9ne/GAME.unity"
+    guid: 52ce7131741043b44ba5b0cf41c24271
+  - enabled: 1
+    path: "Assets/Sc\xE9ne/inGame.unity"
+    guid: 159fd0b7f3fdb8048b8b21ea777c049d
+  - enabled: 1
+    path: "Assets/Sc\xE9ne/selectionPersonnage.unity"
+    guid: d392f6741bc3c7b45b3dd2a3a51e8676
