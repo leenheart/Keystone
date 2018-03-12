@@ -64,7 +64,7 @@ public class Player : NetworkBehaviour
         spell4 = false;
     }
 
-    public float Distance(Vector3 dep1, Vector3 dep2)
+    public static float Distance(Vector3 dep1, Vector3 dep2)
     {
         return Mathf.Sqrt(Mathf.Pow(dep1.x - dep2.x, 2) + Mathf.Pow(dep1.y - dep2.y, 2));
     }
@@ -73,7 +73,7 @@ public class Player : NetworkBehaviour
     {
         Vector3 position = transform.position;
  
-        if (Distance(deplacement, position) <= 5) return true;
+        if (Distance(deplacement, position) <= 50) return true;
 
         return false;
         
@@ -122,6 +122,7 @@ public class Player : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(personnage.getHp());
 
         hpBarre.fillAmount = personnage.getHp();
         manaBarre.fillAmount = personnage.getMana();
@@ -149,7 +150,7 @@ public class Player : NetworkBehaviour
                 if (spell1)
                 {
                     GOspell1.GetComponent<Renderer>().enabled = true;
-                    GOspell1.transform.position = transform.position + Vector3.down;
+                    GOspell1.transform.position = transform.position;// + Vector3.down;
                     
                 }
                 if (spell2)
@@ -189,6 +190,7 @@ public class Player : NetworkBehaviour
                         {
                             GOspell1.GetComponent<Renderer>().enabled = false;
                             Action action = new Action(Action.Type.spell1, hit.point);
+                            Debug.Log("new action");
                             sauvegarde_actions.Enqueue(action);
                             spell1 = false;
                         }
@@ -235,7 +237,7 @@ public class Player : NetworkBehaviour
                 transform.position = act.coordonnees + Vector3.up;
                 if (act.type == Action.Type.spell1)
                 {
-
+                    personnage.Spell1();
                 }
 
             }

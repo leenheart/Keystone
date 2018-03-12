@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Personnage : MonoBehaviour
 {
@@ -28,7 +29,7 @@ public class Personnage : MonoBehaviour
     public Personnage(Vector3 position)
     {
         name = "Doovmar";
-        hp = 1000;
+        hp = 200;
         mana = 100;
         regenMana = 25;
         nbMvt = 5;
@@ -67,6 +68,15 @@ public class Personnage : MonoBehaviour
         vectRangeSpell2 = Vector3.zero;
         vectRangeSpell3 = Vector3.zero;
         vectRangeSpell4 = Vector3.zero;
+
+       /* if (role == inGame.PlayeurTurn.attaquant)
+        {
+            inGame.posAttaquant = transform.position;
+        }
+        if (role == inGame.PlayeurTurn.defenseur)
+        {
+            inGame.posDefenseur = transform.position;
+        }*/
     }
 
     public Personnage(string name, int hp,int mana, int regenMana, int nbMvt, int attack, int armure, Vector3 position)
@@ -109,26 +119,60 @@ public class Personnage : MonoBehaviour
         vectRangeSpell2 = Vector3.zero;
         vectRangeSpell3 = Vector3.zero;
         vectRangeSpell4 = Vector3.zero;
+
+        if (role == inGame.PlayeurTurn.attaquant)
+        {
+            inGame.posAttaquant = transform.position;
+        }
+        if (role == inGame.PlayeurTurn.defenseur)
+        {
+            inGame.posDefenseur = transform.position;
+        }
     }
 
     public void Move(Vector2 movement)
     {
         transform.Translate(movement * Time.deltaTime);
+        if(role == inGame.PlayeurTurn.attaquant)
+        {
+            inGame.posAttaquant = transform.position;
+        }
+        if (role == inGame.PlayeurTurn.defenseur)
+        {
+            inGame.posDefenseur = transform.position;
+        }
     }
 
-    public void Spell1(GameObject range)
+    public void Spell1()
     {
-        range.GetComponent<Collider>().enabled = true;
-
+        Debug.Log("spell1");
+        if (role == inGame.PlayeurTurn.attaquant && Player.Distance(inGame.posAttaquant, inGame.posDefenseur) < 5)
+        {
+            foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                if (player.GetComponent<Player>().personnage.role != role)
+                {
+                    Debug.Log("condiont ok ");
+                    player.GetComponent<Player>().personnage.TakeDommage(100);
+                }
+            }
+        }
+        if (role == inGame.PlayeurTurn.defenseur)
+        {
+            
+        }
     }
 
     public void TakeDommage(int dommage)
     {
-        hp -= dommage * armure / 100;
+        hp -= dommage;// * armure / 100;
         if (hp <= 0)
         {
             Die();
+            Application.Quit();
         }
+        Debug.Log("predn domaggeeee !!!");
+        GameObject.FindGameObjectWithTag("HpBarre").GetComponent<Image>().fillAmount = hp;
     }
 
     public int Attack()

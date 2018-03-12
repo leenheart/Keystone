@@ -29,11 +29,17 @@ public class inGame : MonoBehaviour
     public Text textPlayerturn;
     public Text textTimer;
 
+    public static Vector3 posAttaquant;
+    public static Vector3 posDefenseur;
+
 
 
     // Use this for initialization
     void Start()
     {
+        posAttaquant = Vector3.zero;
+        posDefenseur = Vector3.zero;
+
         passturn = false;
         start = false;
         turn = 1;
@@ -43,12 +49,12 @@ public class inGame : MonoBehaviour
         textTimer = GameObject.FindGameObjectWithTag("TextTimer").GetComponent<Text>();
 
 
-        finChooseAct = 10f;
-        debutChooseAct = 5f;
+        finChooseAct = 5f;
+        debutChooseAct = 1f;
         etape = "choisir actions";
         playeurTurn = PlayeurTurn.attaquant;
-        timeToChoseAct = 10f;
-        timeToDoAct = 5f;
+        timeToChoseAct = 5f;
+        timeToDoAct = 1f;
 
     }
 
