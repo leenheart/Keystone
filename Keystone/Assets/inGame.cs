@@ -13,7 +13,8 @@ public class inGame : MonoBehaviour
     private float timeToDoAct;
 
     private string etape;
-    private string playeurTurn;
+    public enum PlayeurTurn { attaquant, defenseur };
+    public PlayeurTurn playeurTurn;
     private int turn;
 
     public Player playerAttaquant;
@@ -32,7 +33,7 @@ public class inGame : MonoBehaviour
         finChooseAct = 10f;
         debutChooseAct = 5f;
         etape = "choisir actions";
-        playeurTurn = "attaquant";
+        playeurTurn = PlayeurTurn.attaquant;
         timeToChoseAct = 10f;
         timeToDoAct = 5f;
 
@@ -41,11 +42,12 @@ public class inGame : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        Debug.Log(etape + " " + playeurTurn);
         if (etape == "choisir actions" && Time.time > finChooseAct /*&& bouton passé*/)
         {
             
             etape = "actions";
+
             finChooseAct = Time.time + timeToChoseAct + timeToDoAct;
             debutChooseAct = Time.time + timeToDoAct;
             Debug.Log(etape);
@@ -54,6 +56,9 @@ public class inGame : MonoBehaviour
         if (etape == "actions" && Time.time > debutChooseAct)
         {
             etape = "choisir actions";
+            if (playeurTurn == PlayeurTurn.attaquant)
+            playeurTurn = PlayeurTurn.defenseur;
+            else playeurTurn = PlayeurTurn.attaquant;
             //Debug.Log(etape + " " + Time.time);
         }
 
@@ -68,7 +73,7 @@ public class inGame : MonoBehaviour
         return etape;
     }
 
-    public string getPlayeurTurn()
+    public PlayeurTurn getPlayeurTurn()
     {
         return playeurTurn;
     }

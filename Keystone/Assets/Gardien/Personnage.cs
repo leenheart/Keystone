@@ -12,9 +12,9 @@ public class Personnage : MonoBehaviour
     private int nbMvt;
     private int attack;
     private int armure;
-    private string role;
+    private inGame.PlayeurTurn role;
 
-    public Personnage()
+    public Personnage(Vector3 position)
     {
         name = "Personnage";
         hp = 1000;
@@ -23,7 +23,23 @@ public class Personnage : MonoBehaviour
         nbMvt = 5;
         attack = 100;
         armure = 5;
-        role = "attaquant";
+        if (position.x < 10)
+            role = inGame.PlayeurTurn.defenseur;
+        if (position.x >= 10) role = inGame.PlayeurTurn.attaquant;
+    }
+
+    public Personnage(string name, int hp,int mana, int regenMana, int nbMvt, int attack, int armure, Vector3 position)
+    {
+        this.name = name;
+        this.hp = hp;
+        this.mana = mana;
+        this.regenMana = regenMana;
+        this.nbMvt = nbMvt;
+        this.attack = attack;
+        this.armure = armure;
+        if (position.x < 10 )
+        role = inGame.PlayeurTurn.defenseur;
+        if (position.x >= 10) role = inGame.PlayeurTurn.attaquant;
     }
 
     // Use this for initialization
@@ -61,7 +77,7 @@ public class Personnage : MonoBehaviour
         //FIXME
     }
 
-    public string GetRole()
+    public inGame.PlayeurTurn GetRole()
     {
         return role;
     }

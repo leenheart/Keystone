@@ -11,23 +11,18 @@ public class Player : NetworkBehaviour
     public Personnage personnage;
     public inGame inGameObject;
     public Queue sauvegarde_actions;
+    public GameObject rangeDep;
 
-
-    public Player()
-    {
-        pseudo = "Personnage";
-        personnage = new Personnage();
-        sauvegarde_actions = new Queue();
-
-    }
 
     // Use this for initialization
     void Start()
     {
+        pseudo = "Personnage";
+        sauvegarde_actions = new Queue();
         cam = GetComponent<Camera>() as Camera;
-
+        rangeDep = GameObject.FindGameObjectWithTag("Rangedep");
         inGameObject = GameObject.FindGameObjectWithTag("inGame").GetComponent<inGame>();
-        personnage = new Personnage();
+        personnage = new Personnage(transform.position);
     }
 
     // La fonction qui renvoie le vecteur entre la postion du personnage et du click (curseur)
@@ -40,6 +35,8 @@ public class Player : NetworkBehaviour
         if (isLocalPlayer)
         {
 
+            rangeDep.transform.position = transform.position + Vector3.down;
+            rangeDep.GetComponent<Renderer>().enabled = true;
 
             //seul le joueur a qui appartient le gameobject pourra faire :
 
@@ -89,8 +86,8 @@ public class Player : NetworkBehaviour
 
             if (inGameObject.getEtape() == "actions" && inGameObject.getPlayeurTurn() == personnage.GetRole() && sauvegarde_actions.Count > 0)
 
-            {                               
-                
+            {
+                rangeDep.GetComponent<Renderer>().enabled = false;
                 Action act = sauvegarde_actions.Dequeue() as Action;
                 transform.position = act.coordonnees + Vector3.up;
             }

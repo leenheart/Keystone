@@ -6,6 +6,7 @@ TagManager:
   tags:
   - inGame
   - UnderMap
+  - Rangedep
   layers:
   - Default
   - TransparentFX

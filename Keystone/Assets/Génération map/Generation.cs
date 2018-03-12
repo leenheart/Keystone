@@ -224,7 +224,7 @@ public class Generation : MonoBehaviour {
             }
         }
 
-        PrintTab(map);
+        //PrintTab(map);
 
         for (int x = 0; x < sizeMapX; x++)
         {
@@ -359,8 +359,8 @@ public class Generation : MonoBehaviour {
         for (int z = 1; z < sizeMapZ; z++)
         {
             v += sizeMapY + 1;
-            Debug.Log(z);
-            PrintTab(underMap[z]);
+            //Debug.Log(z);
+            //PrintTab(underMap[z]);
             for (int x = 0; x < sizeMapX; x++)
             {
                 for (int y = 0; y < sizeMapY; y++)
