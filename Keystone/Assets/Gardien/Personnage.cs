@@ -14,18 +14,59 @@ public class Personnage : MonoBehaviour
     private int armure;
     private inGame.PlayeurTurn role;
 
+    public GameObject rangeSpell1;
+    public GameObject rangeSpell2;
+    public GameObject rangeSpell3;
+    public GameObject rangeSpell4;
+
+    public Vector3 vectRangeSpell1;
+    public Vector3 vectRangeSpell2;
+    public Vector3 vectRangeSpell3;
+    public Vector3 vectRangeSpell4;
+
+
     public Personnage(Vector3 position)
     {
-        name = "Personnage";
+        name = "Doovmar";
         hp = 1000;
         mana = 100;
         regenMana = 25;
         nbMvt = 5;
         attack = 100;
         armure = 5;
+
+        role = inGame.PlayeurTurn.attaquant;
+
         if (position.x < 10)
+        {
             role = inGame.PlayeurTurn.defenseur;
-        if (position.x >= 10) role = inGame.PlayeurTurn.attaquant;
+        }
+        if (position.x >= 10)
+        {
+            role = inGame.PlayeurTurn.attaquant;
+        }
+
+        rangeSpell1 = Resources.Load(name + " spell1") as GameObject;
+        Instantiate(rangeSpell1, Vector3.zero, Quaternion.identity);
+        GameObject.FindGameObjectWithTag("Doovmar spell1").GetComponent<Renderer>().enabled = false;
+
+        rangeSpell2 = Resources.Load(name + " spell2") as GameObject;
+        Instantiate(rangeSpell2, Vector3.zero, Quaternion.identity);
+        GameObject.FindGameObjectWithTag("Doovmar spell2").GetComponent<Renderer>().enabled = false;
+
+        rangeSpell3 = Resources.Load(name + " spell3") as GameObject;
+        Instantiate(rangeSpell3, Vector3.zero, Quaternion.identity);
+        GameObject.FindGameObjectWithTag("Doovmar spell3").GetComponent<Renderer>().enabled = false;
+
+        rangeSpell4 = Resources.Load(name + " spell4") as GameObject;
+        Instantiate(rangeSpell4, Vector3.zero, Quaternion.identity);
+        GameObject.FindGameObjectWithTag("Doovmar spell4").GetComponent<Renderer>().enabled = false;
+
+
+        vectRangeSpell1 = Vector3.zero;
+        vectRangeSpell2 = Vector3.zero;
+        vectRangeSpell3 = Vector3.zero;
+        vectRangeSpell4 = Vector3.zero;
     }
 
     public Personnage(string name, int hp,int mana, int regenMana, int nbMvt, int attack, int armure, Vector3 position)
@@ -37,25 +78,48 @@ public class Personnage : MonoBehaviour
         this.nbMvt = nbMvt;
         this.attack = attack;
         this.armure = armure;
-        if (position.x < 10 )
-        role = inGame.PlayeurTurn.defenseur;
-        if (position.x >= 10) role = inGame.PlayeurTurn.attaquant;
-    }
+        role = inGame.PlayeurTurn.attaquant;
 
-    // Use this for initialization
-    void Start()
-    {
-    }
+        if (position.x < 10)
+        {
+            role = inGame.PlayeurTurn.defenseur;
+        }
+        if (position.x >= 10)
+        {
+            role = inGame.PlayeurTurn.attaquant;
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
+        rangeSpell1 = Resources.Load(name + " spell1") as GameObject;
+        Instantiate(rangeSpell1, Vector3.zero, Quaternion.identity);
+        rangeSpell1.SetActive(false);
 
+        rangeSpell2 = Resources.Load(name + " spell2") as GameObject;
+        Instantiate(rangeSpell2, Vector3.zero, Quaternion.identity);
+        rangeSpell2.SetActive(false);
+
+        rangeSpell3 = Resources.Load(name + " spell3") as GameObject;
+        Instantiate(rangeSpell3, Vector3.zero, Quaternion.identity);
+        rangeSpell3.SetActive(false);
+
+        rangeSpell4 = Resources.Load(name + " spell4") as GameObject;
+        Instantiate(rangeSpell4, Vector3.zero, Quaternion.identity);
+        rangeSpell4.SetActive(false);
+
+        vectRangeSpell1 = Vector3.zero;
+        vectRangeSpell2 = Vector3.zero;
+        vectRangeSpell3 = Vector3.zero;
+        vectRangeSpell4 = Vector3.zero;
     }
 
     public void Move(Vector2 movement)
     {
         transform.Translate(movement * Time.deltaTime);
+    }
+
+    public void Spell1(GameObject range)
+    {
+        range.GetComponent<Collider>().enabled = true;
+
     }
 
     public void TakeDommage(int dommage)
@@ -82,4 +146,30 @@ public class Personnage : MonoBehaviour
         return role;
     }
 
+    public int getHp()
+    {
+        return hp;
+    }
+
+    public int getMana()
+    {
+        return mana;
+    }
+
+    public bool Spell1Ok(Vector3 pos)
+    {
+        return true;
+    }
+    public bool Spell2Ok(Vector3 pos)
+    {
+        return true;
+    }
+    public bool Spell3Ok(Vector3 pos)
+    {
+        return true;
+    }
+    public bool Spell4Ok(Vector3 pos)
+    {
+        return true;
+    }
 }

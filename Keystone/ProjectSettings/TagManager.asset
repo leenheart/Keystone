@@ -9,6 +9,14 @@ TagManager:
   - Rangedep
   - TextStep
   - TextPlayerTurn
+  - TextTimer
+  - ButtonReady
+  - HpBarre
+  - ManaBarre
+  - Doovmar spell1
+  - Doovmar spell2
+  - Doovmar spell3
+  - Doovmar spell4
   layers:
   - Default
   - TransparentFX

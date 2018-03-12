@@ -17,6 +17,7 @@ public class inGame : MonoBehaviour
     public PlayeurTurn playeurTurn;
     private int turn;
 
+    public static bool passturn;
     public static bool start;
 
     public Player playerAttaquant;
@@ -26,17 +27,20 @@ public class inGame : MonoBehaviour
 
     public Text textEtape;
     public Text textPlayerturn;
+    public Text textTimer;
 
 
 
     // Use this for initialization
     void Start()
     {
+        passturn = false;
         start = false;
         turn = 1;
 
         textEtape = GameObject.FindGameObjectWithTag("TextStep").GetComponent<Text>();
         textPlayerturn = GameObject.FindGameObjectWithTag("TextPlayerTurn").GetComponent<Text>();
+        textTimer = GameObject.FindGameObjectWithTag("TextTimer").GetComponent<Text>();
 
 
         finChooseAct = 10f;
@@ -51,22 +55,24 @@ public class inGame : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+       
 
         if (Player.pret)
         {
             start = Player.pret;
+
+            //GameObject.FindGameObjectWithTag("ButtonReady").active = false;
         }
 
         if (start)
         {
+            textTimer.text = (Mathf.Abs(Time.time - finChooseAct) * 1000 / 1000).ToString();
 
-            if (etape == "choisir actions" && Time.time > finChooseAct /*&& bouton passé*/)
+            if (etape == "choisir actions" && Time.time > finChooseAct || passturn)
             {
-
+                passturn = false;
                 etape = "actions";
                 textEtape.text = "actions";
-                
-
                 finChooseAct = Time.time + timeToChoseAct + timeToDoAct;
                 debutChooseAct = Time.time + timeToDoAct;
             }

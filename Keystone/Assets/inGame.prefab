@@ -34,7 +34,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1284928142039806}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.5956323, y: 0.9342346, z: -0.49392128}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -51,5 +51,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a149b8d4fe42074bb831742a3ca7336, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  etape: 
+  playeurTurn: 0
   playerAttaquant: {fileID: 0}
   playerDefender: {fileID: 0}
+  textEtape: {fileID: 0}
+  textPlayerturn: {fileID: 0}
+  textTimer: {fileID: 0}

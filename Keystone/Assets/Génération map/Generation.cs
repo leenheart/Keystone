@@ -48,15 +48,18 @@ public class Generation : MonoBehaviour {
             triangles[t + 1] = triangles[t + 4] = v + (sizeMapY + 1);
             triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + (sizeMapY + 1);
         }
-
-        if (tab[x, y + 1] == 0)
+        if (y < tab.GetLength(1) - 1)
         {
-            t += 6;
-            triangles[t] = v+1;
-            triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1) +1;
-            triangles[t + 1] = triangles[t + 4] = v + (sizeMapY + 1) * (sizeMapX + 1)  + 1;
-            triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + (sizeMapY + 1)+1;
+            if (tab[x, y + 1] == 0)
+            {
+                t += 6;
+                triangles[t] = v + 1;
+                triangles[t + 2] = triangles[t + 3] = v + (sizeMapY + 1) + 1;
+                triangles[t + 1] = triangles[t + 4] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1;
+                triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + (sizeMapY + 1) + 1;
+            }
         }
+        
     }
 
     void MakeFaceX(int y, int x, ref int t, ref int v, int[,] tab, int makeTest)
@@ -300,7 +303,7 @@ public class Generation : MonoBehaviour {
 
         vertices = new Vector3[(sizeMapX + 1) * (sizeMapY + 1) * (sizeMapZ + 1)];
         //Debug.Log(" ici     " + (sizeMapX + 1) * (sizeMapY + 1) * (sizeMapZ + 1));
-        triangles = new int[sizeMapX * sizeMapY * 24 * (sizeMapZ)];
+        triangles = new int[sizeMapX * sizeMapY * 48 * (sizeMapZ)];
 
         int v = 0;
         int t = 0;
@@ -417,7 +420,7 @@ public class Generation : MonoBehaviour {
                 random = UnityEngine.Random.Range(0, 50);
                 if (random == 1 && map[x, y] == 1)
                 {
-                    Instantiate(Resources.Load("arbre"), new Vector3(x, 0, y), Quaternion.identity);
+                    Instantiate(Resources.Load("arbre"), new Vector3(x, 1, y), new Quaternion(0,-90,-90,0));
                 }
             }
         }
