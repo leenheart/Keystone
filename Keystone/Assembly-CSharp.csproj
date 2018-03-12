@@ -56,6 +56,7 @@
      <Compile Include="Assets\Gardien\Doovmar.cs" />
      <Compile Include="Assets\Gardien\Personnage.cs" />
      <Compile Include="Assets\Génération map\Generation.cs" />
+     <Compile Include="Assets\HUD\ButtonReadyManager.cs" />
      <Compile Include="Assets\inGame.cs" />
      <Compile Include="Assets\Manager.cs" />
      <Compile Include="Assets\Player.cs" />
