@@ -51,15 +51,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Action.cs" />
      <Compile Include="Assets\Audio.cs" />
      <Compile Include="Assets\Caméra\CameraInGame.cs" />
-     <Compile Include="Assets\Gardien\Doovmar.cs" />
-     <Compile Include="Assets\Gardien\Personnage.cs" />
      <Compile Include="Assets\Génération map\Generation.cs" />
-     <Compile Include="Assets\inGame.cs" />
+     <Compile Include="Assets\Guardian.cs" />
+     <Compile Include="Assets\Keratine Arrow.cs" />
      <Compile Include="Assets\Manager.cs" />
-     <Compile Include="Assets\Player.cs" />
+     <Compile Include="Assets\Ohnir.cs" />
      <Compile Include="Assets\Resources\DoovmarSpell1.cs" />
      <Compile Include="Assets\Scéne\ButtonManager.cs" />
      <Compile Include="Assets\WorldSkies\Demo\Scripts\LookCamera.cs" />
