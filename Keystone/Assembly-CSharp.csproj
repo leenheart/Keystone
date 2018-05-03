@@ -52,11 +52,15 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Audio.cs" />
+     <Compile Include="Assets\BlowOfHorn.cs" />
      <Compile Include="Assets\Caméra\CameraInGame.cs" />
      <Compile Include="Assets\Génération map\Generation.cs" />
      <Compile Include="Assets\Guardian.cs" />
      <Compile Include="Assets\Keratine Arrow.cs" />
      <Compile Include="Assets\Manager.cs" />
+     <Compile Include="Assets\Network\New network\Client.cs" />
+     <Compile Include="Assets\Network\New network\Server.cs" />
+     <Compile Include="Assets\Network\UINetwork.cs" />
      <Compile Include="Assets\Ohnir.cs" />
      <Compile Include="Assets\Resources\DoovmarSpell1.cs" />
      <Compile Include="Assets\Scéne\ButtonManager.cs" />

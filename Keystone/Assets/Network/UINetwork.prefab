@@ -9,31 +9,32 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1716116349226876}
+  m_RootGameObject: {fileID: 1573376480930370}
   m_IsPrefabParent: 1
---- !u!1 &1716116349226876
+--- !u!1 &1573376480930370
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4013974502837582}
-  - component: {fileID: 114531686991668724}
-  - component: {fileID: 114783780610270184}
+  - component: {fileID: 4899138723792740}
+  - component: {fileID: 114524551549856752}
+  - component: {fileID: 114377660814315966}
+  - component: {fileID: 114484001163619710}
   m_Layer: 0
-  m_Name: NetWork Manager
+  m_Name: UINetwork
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4013974502837582
+--- !u!4 &4899138723792740
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1716116349226876}
+  m_GameObject: {fileID: 1573376480930370}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -41,12 +42,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114531686991668724
+--- !u!114 &114377660814315966
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1716116349226876}
+  m_GameObject: {fileID: 1573376480930370}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -822479833, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
@@ -58,17 +59,19 @@ MonoBehaviour:
   m_NetworkAddress: localhost
   m_DontDestroyOnLoad: 1
   m_RunInBackground: 1
-  m_ScriptCRCCheck: 1
+  m_ScriptCRCCheck: 0
   m_MaxDelay: 0.01
   m_LogLevel: 2
-  m_PlayerPrefab: {fileID: 1348082117319372, guid: 74fe6fc907a21ae4ea7d596795958b76,
+  m_PlayerPrefab: {fileID: 1602661025760720, guid: adb48032c234256499304d317232eba6,
     type: 2}
   m_AutoCreatePlayer: 1
-  m_PlayerSpawnMethod: 1
+  m_PlayerSpawnMethod: 0
   m_OfflineScene: 
   m_OnlineScene: 
-  m_SpawnPrefabs: []
-  m_CustomConfig: 0
+  m_SpawnPrefabs:
+  - {fileID: 1602661025760720, guid: adb48032c234256499304d317232eba6, type: 2}
+  - {fileID: 1086567299201976, guid: 7072ba385f793cf418525e3c21bb84f7, type: 2}
+  m_CustomConfig: 1
   m_MaxConnections: 4
   m_ConnectionConfig:
     m_PacketSize: 1440
@@ -123,18 +126,30 @@ MonoBehaviour:
   matchSize: 4
   isNetworkActive: 0
   matchMaker: {fileID: 0}
---- !u!114 &114783780610270184
+--- !u!114 &114484001163619710
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1716116349226876}
-  m_Enabled: 1
+  m_GameObject: {fileID: 1573376480930370}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 227461547, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  manager: {fileID: 114531686991668724}
+  manager: {fileID: 0}
   showGUI: 1
   offsetX: 0
   offsetY: 0
+--- !u!114 &114524551549856752
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1573376480930370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c62b1050510027d479aa2fb099d8f896, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Manager: {fileID: 1086567299201976, guid: 7072ba385f793cf418525e3c21bb84f7, type: 2}

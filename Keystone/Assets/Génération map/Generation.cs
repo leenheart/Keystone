@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.Networking;
 
-public class Generation : MonoBehaviour
+public class Generation : NetworkBehaviour
 {
 
     public int surfaceBaseX;
@@ -14,13 +15,22 @@ public class Generation : MonoBehaviour
     public float cellSize;
     public int nbSmooth;
 
+    [SyncVar]
+    public string MapString;
+
     private int[,] map;
+
     private int[,] cielTab;
     private int[][,] underMap;
 
     private Vector3[] vertices;
     private int[] triangles;
     private Mesh mesh;
+
+    /*void Awake()
+    {
+        gameObject.SetActive(true);
+    }*/
 
     void UpdateMesh(Mesh m)
     {
@@ -257,36 +267,44 @@ public class Generation : MonoBehaviour
         }
     }
 
-    // Use this for initialization
-    void Start()
+    public void Start()
     {
-
+        DontDestroyOnLoad(gameObject);
         mesh = GetComponent<MeshFilter>().mesh;
 
-        /*cellSize = 1;
+        map = new int[sizeMapX, sizeMapY];
+
+        sizeMapZ = 20;
+        nbSmooth = 3;
+
+        cellSize = 1;
         surfaceBaseX = 8;
         sizeMapX = 30;
         sizeMapY = 40;
-        fluctuation = 2;*/
+        fluctuation = 2;
+    }
+    public void GenerateMap()
+    {
+        DontDestroyOnLoad(gameObject);
+        mesh = GetComponent<MeshFilter>().mesh;
 
-        //generation tableau de 1 et 0 qui forme la map
-
-        //initialization
-        cielTab = new int[sizeMapX, sizeMapY];
         map = new int[sizeMapX, sizeMapY];
-        underMap = new int[sizeMapZ][,];
+
+        sizeMapZ = 20;
+        nbSmooth = 3;
+
+        cellSize = 1;
+        surfaceBaseX = 8;
+        sizeMapX = 30;
+        sizeMapY = 40;
+        fluctuation = 2;
 
         for (int x = 0; x < sizeMapX; x++)
         {
             for (int y = 0; y < sizeMapY; y++)
             {
                 map[x, y] = 0;
-                cielTab[x, y] = 1;
             }
-        }
-        for (int z = 0; z < sizeMapZ; z++)
-        {
-            underMap[z] = new int[sizeMapX, sizeMapY];
         }
 
         for (int x = 0; x < 5; x++)
@@ -373,7 +391,78 @@ public class Generation : MonoBehaviour
             }
         }
 
+        // create the string:
+        MapString = "";
+        // Assume C[i] has the number of the shuffled card
+        for (int i = 0; i < sizeMapX; i++)
+        {
+            for (int j = 0; j < sizeMapY; j++)
+            {
+                string crd = "" + map[i, j];
+                MapString += crd;
+            }
+        }
+
+        Debug.Log(MapString);
+    }
+
+    void PrintTab(int[,] tab)
+    {
+        //voir le tableau dans les logs
+        for (int x = 0; x < sizeMapX; x++)
+        {
+            string s = "";
+            for (int y = 0; y < sizeMapY; y++)
+            {
+                s += tab[x, y];
+            }
+            Debug.Log(s);
+        }
+    }
+
+    public void Generate()
+    {
+        DontDestroyOnLoad(gameObject);
+        mesh = GetComponent<MeshFilter>().mesh;
+
+        map = new int[sizeMapX, sizeMapY];
+
+        sizeMapZ = 20;
+        nbSmooth = 3;
+
+        cellSize = 1;
+        surfaceBaseX = 8;
+        sizeMapX = 30;
+        sizeMapY = 40;
+        fluctuation = 2;
+
         //PrintTab(map);
+        string crd = MapString.ToString();
+        int index = 0;
+
+        for (int i = 0; i < sizeMapX; i++)
+        {
+            for (int j = 0; j < sizeMapY; j++)
+            {
+                map[i, j] = crd[index] -48;
+                index++;
+            }
+        }
+
+        cielTab = new int[sizeMapX, sizeMapY];
+        underMap = new int[sizeMapZ][,];
+
+        for (int x = 0; x < sizeMapX; x++)
+        {
+            for (int y = 0; y < sizeMapY; y++)
+            {
+                cielTab[x, y] = 1;
+            }
+        }
+        for (int z = 0; z < sizeMapZ; z++)
+        {
+            underMap[z] = new int[sizeMapX, sizeMapY];
+        }
 
         for (int x = 0; x < sizeMapX; x++)
         {
@@ -397,6 +486,7 @@ public class Generation : MonoBehaviour
                 }
             }
             int rand = 0;
+
             for (int x = 0; x < sizeMapX; x++)
             {
                 for (int y = 0; y < sizeMapY; y++)
@@ -503,7 +593,7 @@ public class Generation : MonoBehaviour
             }
         }
 
-        Mesh m = GameObject.FindWithTag("UnderMap").GetComponent<MeshFilter>().mesh;
+        Mesh m = GetComponentsInChildren<MeshFilter>()[1].mesh;
 
         UpdateMesh(m);
 
@@ -528,4 +618,6 @@ public class Generation : MonoBehaviour
             }
         }
     }
+
 }
+        

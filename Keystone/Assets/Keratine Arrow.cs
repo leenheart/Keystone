@@ -10,8 +10,7 @@ public class KeratineArrow : MonoBehaviour {
         Debug.Log(collider.gameObject.name);
         if (collider.gameObject.name == "arbre(Clone)" || collider.gameObject.name == "dec(Clone)" || collider.gameObject.name == "Castle")
         {
-            
-            Destroy(collider.gameObject);
+            Destroy(gameObject);
         }
         if (collider.gameObject.name == "Playeur")
         {

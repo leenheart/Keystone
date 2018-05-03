@@ -2,16 +2,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public abstract class Guardian : MonoBehaviour {
+public abstract class Guardian : NetworkBehaviour {
 
 
-    public int HpMax;
-    public int Hp;
-    public int Endurance;
-    public int EnduranceMax;
+    public float HpMax;
+    public float Hp;
+    public float Endurance;
+    public float EnduranceMax;
     public int Armor;
     public int MooveRangeForEndurance;
+    public int OneMoove;
+    public int Spell1ForEndurance;
+    public int Spell2ForEndurance;
+    public int Spell3ForEndurance;
+    public int Spell4ForEndurance;
+    public bool AbleToMoove;
 
     public void TakeDammage(int damage)
     {
