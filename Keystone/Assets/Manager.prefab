@@ -52,9 +52,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6d90afdaf702484c87f7e84b60c1077, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Att: {fileID: 0}
+  Def: {fileID: 0}
+  turn: 0
+  AbleToDo: 0
   Attacker: {fileID: 0}
   Defender: {fileID: 0}
-  turnTime: 15
+  textPlayerTurn: {fileID: 0}
+  textTimeToPlay: {fileID: 0}
+  Mana: {fileID: 0}
+  Vie: {fileID: 0}
+  turnTime: 30
   Selection: 
 --- !u!114 &114985438778490938
 MonoBehaviour:

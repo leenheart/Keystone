@@ -13,10 +13,7 @@ TagManager:
   - ButtonReady
   - HpBarre
   - ManaBarre
-  - Doovmar spell1
-  - Doovmar spell2
-  - Doovmar spell3
-  - Doovmar spell4
+  - LockAndStart
   layers:
   - Default
   - TransparentFX

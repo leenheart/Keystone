@@ -5,30 +5,16 @@ using UnityEngine.Networking;
 
 public class Ohnir : Guardian {
 
-
-    [SyncVar]
-    public bool Attacker = false;
-    [SyncVar]
-    public bool Defender = false;
-
     public GameObject Arrow;
 
     Quaternion pos;
-
-    [Command]
-    public void CmdInitiate(Vector3 v)
-    {
-        if (isLocalPlayer)
-        {
-            gameObject.transform.position = v;
-            //gameObject.transform.rotation = new Quaternion(0,0,90,0);
-        }
-    }
 
     public override bool Spell1Selection()
     {
         if (Endurance >= 100)
         {
+            GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[4].enabled = true;
             return true;
         }
         return false;
@@ -38,6 +24,7 @@ public class Ohnir : Guardian {
     {
         if (Endurance >= 200)
         {
+            GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
             return true;
         }
         return false;
@@ -45,7 +32,8 @@ public class Ohnir : Guardian {
     public override bool Spell3Selection()
     {
         if (Endurance >= 200)        
-        {  
+        {
+            GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
             return true;
         }
         return false;
@@ -54,6 +42,8 @@ public class Ohnir : Guardian {
     {
         if (Endurance >= 700)
         {
+            GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[3].enabled = true;
             return true;
         }
         return false;
@@ -61,11 +51,13 @@ public class Ohnir : Guardian {
 
     /* ________________________________________________________________________________________________________________________________________________________________________________________________ */
 
-    public override void Spell1Activation(RaycastHit hit)
+    public override void Spell1Activation(Vector3 hitPoint)
     {
+        GetComponentsInChildren<MeshCollider>()[0].enabled = true;
         GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
+        Endurance -= Spell1ForEndurance;
     }
-    public override void Spell2Activation(RaycastHit hit)
+    public override void Spell2Activation(Vector3 hitPoint)
     {
         if (AbleToMoove)
         {
@@ -77,47 +69,55 @@ public class Ohnir : Guardian {
             Armor -= 60 * Armor / 100;
             AbleToMoove = true;
         }
+        Endurance -= Spell2ForEndurance;
     }
-    public override void Spell3Activation(RaycastHit hit)
+    public override void Spell3Activation(Vector3 hitPoint)
     {
     
             
-        Vector3 look = hit.point - transform.position;
+        Vector3 look = hitPoint - transform.position;
         look.y = 0;
         transform.rotation = Quaternion.LookRotation(look);
-        GameObject arrowNow = Instantiate(Arrow, transform.position + transform.forward , transform.rotation);
+        GameObject arrowNow = Instantiate(Arrow, transform.position + transform.forward + transform.forward + transform.forward, transform.rotation);
         Destroy(arrowNow, 5);
         arrowNow.GetComponent<Rigidbody>().AddForce(transform.forward * 100 * Time.deltaTime);
-            
-      
+        Endurance -= Spell3ForEndurance;
+
     }
 
     void OnCollisionEnter(Collision collider)
     {
-        Debug.Log(collider.gameObject.name);
-        if (collider.gameObject.name == "arbre(Clone)" || collider.gameObject.name == "dec(Clone)" || collider.gameObject.name == "Castle")
+        if (collider.gameObject.name == "Arrow(Clone)")
         {
+            Debug.Log("ARROW TUCH :" + collider.gameObject.name);
             Destroy(collider.gameObject);
+            TakeDammage(250);
         }
-        if (collider.gameObject.name == "Playeur")
+        if (collider.gameObject.tag == "Player")
         {
+            HitPoint = transform.position;
+            Debug.Log(collider.gameObject.name + "something append " );
             collider.gameObject.GetComponent<Guardian>().TakeDammage(250);
         }
     }
 
-    public override void Spell4Activation(RaycastHit hit)
+    public override void Spell4Activation(Vector3 hitPoint)
     {
-        if (hit.collider.name != "dec(Clone)" && hit.collider.name != "arbre(Clone)")
+        //if (GameObject.Find("Manager").GetComponent<Manager>().ColliderName != "dec(Clone)" && GameObject.Find("Manager").GetComponent<Manager>().ColliderName != "arbre(Clone)")
         {
-            Debug.Log("Spell4");
             //PlayeurNow.transform.position = hit.point + Vector3.up;
             GetComponent<CapsuleCollider>().enabled = true;
             GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
-            Vector3 look = hit.point - transform.position;
+            Vector3 look = hitPoint - transform.position;
             look.y = 0;
             transform.rotation = Quaternion.LookRotation(look);
-        
+            Mooving = true;
+            MoovingSpeed = 10;
+            HitPoint = hitPoint;
+            AbleToDo = false;
         }
+        Endurance -= Spell4ForEndurance;
+
     }
 
     // Use this for initialization
@@ -137,15 +137,5 @@ public class Ohnir : Guardian {
         Spell3ForEndurance = 200;
         Spell4ForEndurance = 700;
         AbleToMoove = true;
-    }
-
-
-
-    [Command]
-    public void CmdSpawn()
-    {
-        DontDestroyOnLoad(gameObject);
-        //Spawn the GameObject you assign in the Inspector
-        NetworkServer.Spawn(gameObject);
     }
 }

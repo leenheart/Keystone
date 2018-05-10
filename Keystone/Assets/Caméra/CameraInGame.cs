@@ -8,6 +8,7 @@ public class CameraInGame : MonoBehaviour
     private Transform _this;
     public Vector3 dir;
     public int speed;
+    public float ZoomSpeed = 2f;
 
 
     // Use this for initialization
@@ -15,7 +16,7 @@ public class CameraInGame : MonoBehaviour
     {
         _this = this.gameObject.GetComponent<Transform>();
         dir = Vector3.zero;
-        speed = 5;
+        speed = 10;
 
     }
 
@@ -24,19 +25,35 @@ public class CameraInGame : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            transform.Translate(new Vector3(speed * Time.deltaTime, 0, 0));
+            transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            transform.Translate(new Vector3(-speed * Time.deltaTime, 0, 0));
+            transform.position += new Vector3(-speed * Time.deltaTime, 0, 0);
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            transform.Translate(new Vector3(0, 0, -speed * Time.deltaTime));
+            transform.position += new Vector3(0,0,-speed * Time.deltaTime);
         }
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            transform.Translate(new Vector3(0, 0, speed * Time.deltaTime));
+            transform.position += new Vector3(0,0, speed * Time.deltaTime);
+        }
+
+        if (Input.GetAxis("Mouse ScrollWheel") < 0)
+        {
+            if (transform.position.z > 2)
+            {
+                transform.position += new Vector3(0, ZoomSpeed, 0);
+            }
+        }
+
+        if (Input.GetAxis("Mouse ScrollWheel") > 0)
+        {
+            if (transform.position.z > 2)
+            {
+                transform.position -= new Vector3(0, ZoomSpeed, 0);
+            }
         }
     }
 }

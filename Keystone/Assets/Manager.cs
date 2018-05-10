@@ -1,47 +1,51 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.UIElements;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class Manager : NetworkBehaviour
+public class Manager : MonoBehaviour
 {
     public Sprite Att;
     public Sprite Def;
 
-    public int turn;
-    float endNextTurn;
+    public Image MooveButton;
+    public Image Spell1Button;
+    public Image Spell2Button;
+    public Image Spell3Button;
+    public Image Spell4Button;
 
-    [SyncVar(hook = "Sync")]
+    public int turn;
+    public float endNextTurn;
+
     float DiffTimeTurn;
 
-    void Sync(float t)
-    {
-        Debug.Log("Sync !!!" + t);
-    }
-
     public bool AbleToDo;
+
     public GameObject Attacker;
     public GameObject Defender;
 
-    public UnityEngine.UI.Image textPlayerTurn;
+    public GameObject PlayerAvatar;
+
+    public Image textPlayerTurn;
 
     public Text textTimeToPlay;
 
-    public UnityEngine.UI.Image Mana;
-    public UnityEngine.UI.Image Vie;
+    public Image Mana;
+    public Image Vie;
 
     GameObject PlayeurNow;
 
     public float turnTime;
     public string Selection;
 
+    public string ColliderName;
+
     // Use this for initialization
     void Start()
     {
         AbleToDo = true;
-        Attacker = GameObject.Find("PlayerOhnir(Clone)");
+       // Attacker = GameObject.Find("PlayerOhnir(Clone)");
         DontDestroyOnLoad(gameObject);
         Selection = "";
         turn = 0;
@@ -50,16 +54,24 @@ public class Manager : NetworkBehaviour
 
     }
 
- public void PassTurn()
+    public void PassTurn()
     {
-        endNextTurn = Time.time;
+        if (PlayerAvatar == PlayeurNow)
+        {
+            if (GameObject.Find("Client"))
+            {
+                GameObject.Find("Client").GetComponent<Client>().PassTurn();
+            }
+            else
+            {
+                GameObject.Find("Server").GetComponent<Server>().PassTurn();
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        Mana.fillAmount = (Attacker.GetComponent<Ohnir>().Endurance / Attacker.GetComponent<Ohnir>().EnduranceMax) / 2;
-        Vie.fillAmount = (Attacker.GetComponent<Ohnir>().Hp / Attacker.GetComponent<Ohnir>().HpMax) / 2;
 
         DiffTimeTurn = endNextTurn - Time.time;
         textTimeToPlay.text = (DiffTimeTurn).ToString();
@@ -67,9 +79,14 @@ public class Manager : NetworkBehaviour
         {
 
             turn++;
-            Attacker.GetComponent<Ohnir>().Endurance += 60 * Attacker.GetComponent<Ohnir>().EnduranceMax / 100;
-            if (Attacker.GetComponent<Ohnir>().Endurance > Attacker.GetComponent<Ohnir>().EnduranceMax) Attacker.GetComponent<Ohnir>().Endurance = Attacker.GetComponent<Ohnir>().EnduranceMax;
-            endNextTurn += turnTime;
+
+            foreach (GameObject ohnir in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                ohnir.GetComponent<Ohnir>().Endurance += 60 * ohnir.GetComponent<Ohnir>().EnduranceMax / 100;
+                if (ohnir.GetComponent<Ohnir>().Endurance > ohnir.GetComponent<Ohnir>().EnduranceMax) ohnir.GetComponent<Ohnir>().Endurance = ohnir.GetComponent<Ohnir>().EnduranceMax;
+            }
+
+            endNextTurn = Time.time + turnTime;
 
             if (PlayeurNow == Attacker) // changement du joueur 
             {
@@ -77,105 +94,133 @@ public class Manager : NetworkBehaviour
                 PlayeurNow.GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
                 PlayeurNow.GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
                 PlayeurNow.GetComponentsInChildren<MeshCollider>()[0].enabled = false;
-                GameObject.Find("TurnPlayeur").GetComponent<UnityEngine.UI.Image>().sprite = Def;
+                Spell1Button.color = Color.white;
+                Spell2Button.color = Color.white;
+                Spell3Button.color = Color.white;
+                Spell4Button.color = Color.white;
+                MooveButton.color = Color.white;
+                GameObject.Find("TurnPlayeur").GetComponent<Image>().sprite = Def;
                 PlayeurNow = Defender;
             }
             else
             {
-                /* PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
-                 PlayeurNow.GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
-                 PlayeurNow.GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
-                 PlayeurNow.GetComponentsInChildren<MeshCollider>()[0].enabled = false;*/
-                GameObject.Find("TurnPlayeur").GetComponent<UnityEngine.UI.Image>().sprite = Att;
+                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
+                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
+                PlayeurNow.GetComponentsInChildren<MeshCollider>()[0].enabled = false;
+                Spell1Button.color = Color.white;
+                Spell2Button.color = Color.white;
+                Spell3Button.color = Color.white;
+                Spell4Button.color = Color.white;
+                MooveButton.color = Color.white;
+                GameObject.Find("TurnPlayeur").GetComponent<Image>().sprite = Att;
                 PlayeurNow = Attacker;
             }
         }
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
+        Mana.fillAmount = (PlayerAvatar.GetComponent<Guardian>().Endurance / PlayerAvatar.GetComponent<Guardian>().EnduranceMax) / 2;
+        Vie.fillAmount = (PlayerAvatar.GetComponent<Guardian>().Hp / PlayerAvatar.GetComponent<Guardian>().HpMax) / 2;
 
-        if (Physics.Raycast(ray, out hit))
+
+        if (PlayerAvatar == PlayeurNow)
         {
-            //ONLI FOR OHNIR
-            if (Selection == "Spell4")
-            {
-                Vector3 look = hit.point - PlayeurNow.transform.position;
-                look.y = 0;
-                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[2].gameObject.transform.rotation = Quaternion.LookRotation(look);
-            }
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
 
-            if (AbleToDo && Input.GetButtonDown("Fire1"))
+            if (Physics.Raycast(ray, out hit))
             {
-                if (Selection == "Spell1")
+                //ONLI FOR OHNIR
+                if (Selection == "Spell4")
                 {
-                    PlayeurNow.GetComponentsInChildren<MeshRenderer>()[4].enabled = true;
-                    PlayeurNow.GetComponentsInChildren<MeshCollider>()[0].enabled = true;
-                    PlayeurNow.GetComponent<Guardian>().Spell1Activation(hit);
-                    Selection = "";
-                    PlayeurNow.GetComponent<Guardian>().Endurance -= PlayeurNow.GetComponent<Guardian>().Spell1ForEndurance;
-                }
-                else if (Selection == "Spell2")
-                {
-                    PlayeurNow.GetComponent<Guardian>().Spell2Activation(hit);
-                    Selection = "";
-                    PlayeurNow.GetComponent<Guardian>().Endurance -= PlayeurNow.GetComponent<Guardian>().Spell2ForEndurance;
-                }
-                else if (Selection == "Spell3")
-                {
-                    PlayeurNow.GetComponent<Guardian>().Spell3Activation(hit);
-                    Selection = "";
-                    PlayeurNow.GetComponent<Guardian>().Endurance -= PlayeurNow.GetComponent<Guardian>().Spell3ForEndurance;
-                }
-                else if (Selection == "Spell4")
-                {
-                    PlayeurNow.GetComponent<Guardian>().Spell4Activation(hit);
-                    AbleToDo = false;
-                    PlayeurNow.GetComponent<Guardian>().Endurance -= PlayeurNow.GetComponent<Guardian>().Spell4ForEndurance;
-                    PlayeurNow.GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
+                    Vector3 look = hit.point - PlayeurNow.transform.position;
+                    look.y = 0;
+                    PlayeurNow.GetComponentsInChildren<MeshRenderer>()[2].gameObject.transform.rotation = Quaternion.LookRotation(look);
+                    PlayeurNow.GetComponentsInChildren<MeshRenderer>()[2].gameObject.transform.localScale = new Vector3(3,0.001f,CalculRange(hit.point, PlayeurNow.transform.position)/20);
                 }
 
-                else if (Selection == "Moove" && PlayeurNow.GetComponent<Guardian>().AbleToMoove )
+                if (AbleToDo && Input.GetButtonDown("Fire1"))
                 {
-                    //si la position que le mec a donner est correcte
-                    if (CalculRange(PlayeurNow.transform.position, hit.point) <= PlayeurNow.GetComponent<Guardian>().OneMoove && hit.collider.name != "dec(Clone)" && hit.collider.name != "arbre(Clone)")
+                    if (Selection == "Spell1")
                     {
-                        //PlayeurNow.transform.position = hit.point + Vector3.up;
-                        PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
-                        PlayeurNow.GetComponent<Guardian>().Endurance -= PlayeurNow.GetComponent<Guardian>().MooveRangeForEndurance;
-                        AbleToDo = false;
-                        Vector3 look =  hit.point - PlayeurNow.transform.position  ;
-                        look.y = 0;
-                        PlayeurNow.transform.rotation = Quaternion.LookRotation(look);
+                        PlayeurNow.GetComponent<Guardian>().Spell1Activation(hit.point);
+                        if (GameObject.Find("Client"))
+                        {
+                            GameObject.Find("Client").GetComponent<Client>().Spell(hit.point, 1);
+                        }
+                        else
+                        {
+                            GameObject.Find("Server").GetComponent<Server>().Spell(hit.point, 1);
+                        }
+                        Spell1Button.color = Color.white;
+                        Selection = "";
+                    }
+                    else if (Selection == "Spell2")
+                    {
+                        PlayeurNow.GetComponent<Guardian>().Spell2Activation(hit.point);
+                        if (GameObject.Find("Client"))
+                        {
+                            GameObject.Find("Client").GetComponent<Client>().Spell(hit.point, 2);
+                        }
+                        else
+                        {
+                            GameObject.Find("Server").GetComponent<Server>().Spell(hit.point, 2);
+                        }
+                        Spell2Button.color = Color.white;
+                        Selection = "";
+                    }
+                    else if (Selection == "Spell3")
+                    {
+                        PlayeurNow.GetComponent<Guardian>().Spell3Activation(hit.point);
+                        if (GameObject.Find("Client"))
+                        {
+                            GameObject.Find("Client").GetComponent<Client>().Spell(hit.point, 3);
+                        }
+                        else
+                        {
+                            GameObject.Find("Server").GetComponent<Server>().Spell(hit.point, 3);
+                        }
+                        Spell3Button.color = Color.white;
+                        Selection = "";
+                    }
+                    else if (Selection == "Spell4")
+                    {
+                        ColliderName = hit.collider.name;
+                        PlayeurNow.GetComponent<Guardian>().Spell4Activation(hit.point);
+                        if (GameObject.Find("Client"))
+                        {
+                            GameObject.Find("Client").GetComponent<Client>().Spell(hit.point, 4);
+                        }
+                        else
+                        {
+                            GameObject.Find("Server").GetComponent<Server>().Spell(hit.point, 4);
+                        }
+                        Spell4Button.color = Color.white;
+                        Selection = "";
+                    }
+
+                    else if (Selection == "Moove")
+                    {
+                        //Debug.Log((hit.collider.name != "dec(Clone)") + " " + (hit.collider.name != "arbre(Clone)") + " " + PlayeurNow.GetComponent<Guardian>().AbleToMoove + " " + (CalculRange(transform.position, hit.point) <= PlayeurNow.GetComponent<Guardian>().OneMoove));
+                        //Debug.Log(CalculRange(transform.position, hit.point)+ " <= " + PlayeurNow.GetComponent<Guardian>().OneMoove);
+                        if (hit.collider.name != "dec(Clone)" && hit.collider.name != "arbre(Clone)" && PlayeurNow.GetComponent<Guardian>().AbleToMoove && CalculRange(PlayeurNow.transform.position, hit.point) <= PlayeurNow.GetComponent<Guardian>().OneMoove)
+                        {
+                            PlayeurNow.GetComponent<Guardian>().Moove(hit.point);
+                            if (GameObject.Find("Client"))
+                            {
+                                GameObject.Find("Client").GetComponent<Client>().Moove(hit.point);
+                            }
+                            else
+                            {
+                                GameObject.Find("Server").GetComponent<Server>().Moove(hit.point);
+                            }
+                        }
+                        MooveButton.color = Color.white;
+                        Selection = "";
                     }
                 }
             }
         }
 
-        if (!AbleToDo && Selection == "Moove")
-        {
-            if (CalculRange(PlayeurNow.transform.position + PlayeurNow.transform.forward * Time.deltaTime * 3, hit.point) > CalculRange(PlayeurNow.transform.position, hit.point))
-            {
-                AbleToDo = true;
-                Selection = "";
-            }
-            else
-            {
-                PlayeurNow.transform.position += PlayeurNow.transform.forward * Time.deltaTime * 3;
-            }
-        }
-        else if (!AbleToDo && Selection == "Spell4")
-        {
-            if (CalculRange(PlayeurNow.transform.position + PlayeurNow.transform.forward * Time.deltaTime * 10, hit.point) > CalculRange(PlayeurNow.transform.position, hit.point))
-            {
-                PlayeurNow.GetComponent<CapsuleCollider>().enabled = false;
-                AbleToDo = true;
-                Selection = "";
-            }
-            else
-            {
-                PlayeurNow.transform.position += PlayeurNow.transform.forward * Time.deltaTime *  10;
-            }
-        }
     }
 
     public static float CalculRange(Vector3 pos1, Vector3 pos2)
@@ -185,46 +230,44 @@ public class Manager : NetworkBehaviour
 
     public void Moove()
     { 
-        if (AbleToDo && PlayeurNow.GetComponent<Guardian>().Endurance >= PlayeurNow.GetComponent<Guardian>().MooveRangeForEndurance) {
+        if (PlayerAvatar == PlayeurNow )
+        {
+            PlayeurNow.GetComponent<Guardian>().MooveSelection();
+            MooveButton.color = Color.green;
             Selection = "Moove";
-            PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = true;
-            
-            //afficher range de deplacement
         }
     }
     public void Spell1()
     {
-        if (AbleToDo &&  PlayeurNow.GetComponent<Guardian>().Spell1Selection())
+        if (PlayerAvatar == PlayeurNow &&  AbleToDo &&  PlayeurNow.GetComponent<Guardian>().Spell1Selection())
         {
-            PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
-            PlayeurNow.GetComponentsInChildren<MeshRenderer>()[4].enabled = true;
             Selection = "Spell1";
+            Spell1Button.color = Color.green;
         }
     }
     public void Spell2()
     {
-        if (AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell2Selection())
+        if (PlayerAvatar == PlayeurNow &&  AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell2Selection())
         {
-            PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
             Selection = "Spell2";
+            Spell2Button.color = Color.green;
         }
     }
     public void Spell3()
     {
-        if (AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell3Selection())
+        if (PlayerAvatar == PlayeurNow &&  AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell3Selection())
         {
-            PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
             Selection = "Spell3";
+            Spell3Button.color = Color.green;
         }
 
     }
     public void Spell4()
     {
-        if (AbleToDo &&PlayeurNow.GetComponent<Guardian>().Spell4Selection())
+        if (PlayerAvatar == PlayeurNow && AbleToDo &&PlayeurNow.GetComponent<Guardian>().Spell4Selection())
         {
-            PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
-            PlayeurNow.GetComponentsInChildren<MeshRenderer>()[3].enabled = true;
             Selection = "Spell4";
+            Spell4Button.color = Color.green;
         }
 
     }

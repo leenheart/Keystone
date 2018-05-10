@@ -186,8 +186,8 @@ GameObject:
   - component: {fileID: 372216147}
   - component: {fileID: 372216146}
   m_Layer: 5
-  m_Name: Button
-  m_TagString: Untagged
+  m_Name: LockAndStart
+  m_TagString: LockAndStart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -216,7 +216,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 372216144}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -250,19 +250,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2088636414}
-        m_MethodName: ActivateGameObject
-        m_Mode: 2
+        m_MethodName: GenerateMap
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 1421816998697534, guid: e095bfdfe5d5d60409b59e96d045f21f,
-            type: 2}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: inGame
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 2088636414}
-        m_MethodName: Lock
+      - m_Target: {fileID: 0}
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -272,8 +271,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 2088636414}
-        m_MethodName: GenerateMap
+      - m_Target: {fileID: 0}
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -302,7 +301,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 372216144}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -700,8 +699,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1156087024}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 229, y: 228, z: 0}
-  m_LocalScale: {x: 0.5725, y: 0.5725, z: 0.5725}
+  m_LocalPosition: {x: 239, y: 229, z: 0}
+  m_LocalScale: {x: 0.5975, y: 0.5975, z: 0.5975}
   m_Children:
   - {fileID: 935049831}
   - {fileID: 372216145}

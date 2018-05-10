@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Networking;
 
 public class ButtonManager : MonoBehaviour
 {
@@ -27,24 +26,40 @@ public class ButtonManager : MonoBehaviour
 
     public void ActivateGameObject(GameObject o)
     {
+        DontDestroyOnLoad(o);
         o.SetActive(true);
     }
 
+
+
     public void GenerateMap()
     {
-        GameObject.Find("MapGeneration 1").GetComponent<Generation>().Generate();
+        if (GameObject.Find("Client"))
+        {
+        GameObject.Find("Client").GetComponent<Client>().GenerateMap();
+        }
+        else
+        {
+            GameObject.Find("MapGeneration 1").GetComponent<Generation>().Generate();
+        }
+
+    }
+
+    public void Ready()
+    {
+        if (GameObject.Find("Client"))
+        {
+            GameObject.Find("Client").GetComponent<Client>().Ready();
+        }
+        else
+        {
+            GameObject.Find("Server").GetComponent<Server>().Ready();
+        }
+
     }
 
     public void SetPlayeurGuardian(GameObject pl)
     {
-        /* GameObject player = GameObject.Find("PlayerVirtual(Clone)");
-         if (guardian == "Ohnir")
-         {
-             DontDestroyOnLoad(player);
-             player.AddComponent<Ohnir>();
-             player.transform.position = new Vector3(2, 1, 20);
-            // player.GetComponent<Rigidbody>().isKinematic = false;
-         }*/
 
         playeur = pl;
         DontDestroyOnLoad(playeur);
@@ -60,30 +75,9 @@ public class ButtonManager : MonoBehaviour
         Defender = true;
     }
 
-    public void Lock()
+    public void Connect()
     {
-        foreach (var c in GameObject.FindGameObjectsWithTag("Player"))
-        {
-            if (GameObject.Find("Button Manager save").GetComponent<ButtonManager>().Attacker)
-            {
-                c.GetComponent<Ohnir>().Attacker = true;
-                c.GetComponent<Ohnir>().CmdInitiate(new Vector3(2, 1.3f, 20));
-            }
-            else if ((GameObject.Find("Button Manager save").GetComponent<ButtonManager>().Defender))
-            {
-                c.GetComponent<Ohnir>().Defender = true;
-                c.GetComponent<Ohnir>().CmdInitiate(new Vector3(20, 1.3f, 20));
-            }
-           
-        }
+        GameObject.Find("Client").GetComponent<Client>().Connect();
     }
-
-
-    /* public void CmdSpawnGuardian(GameObject p)
-     {
-         GameObject mana = GameObject.Find("Manager");
-         mana.GetComponent<NetworkIdentity>().AssignClientAuthority(GetComponent<NetworkIdentity>().connectionToClient);
-         mana.GetComponent<Manager>().CmdSpawn(p);
-     }*/
 
 }

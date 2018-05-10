@@ -1,4 +1,4 @@
 sceneSetups:
-- path: "Assets/Sc\xE9ne/inGame.unity"
+- path: "Assets/Sc\xE9ne/Serveur.unity"
   isLoaded: 1
   isActive: 1

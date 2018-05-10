@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using UnityEngine.Networking;
 
-public class Generation : NetworkBehaviour
+public class Generation : MonoBehaviour
 {
 
     public int surfaceBaseX;
@@ -15,7 +15,6 @@ public class Generation : NetworkBehaviour
     public float cellSize;
     public int nbSmooth;
 
-    [SyncVar]
     public string MapString;
 
     private int[,] map;
@@ -274,14 +273,14 @@ public class Generation : NetworkBehaviour
 
         map = new int[sizeMapX, sizeMapY];
 
-        sizeMapZ = 20;
+        /*sizeMapZ = 20;
         nbSmooth = 3;
 
         cellSize = 1;
         surfaceBaseX = 8;
         sizeMapX = 30;
         sizeMapY = 40;
-        fluctuation = 2;
+        fluctuation = 2;*/
     }
     public void GenerateMap()
     {
@@ -290,14 +289,14 @@ public class Generation : NetworkBehaviour
 
         map = new int[sizeMapX, sizeMapY];
 
-        sizeMapZ = 20;
+        /*sizeMapZ = 20;
         nbSmooth = 3;
 
         cellSize = 1;
         surfaceBaseX = 8;
         sizeMapX = 30;
         sizeMapY = 40;
-        fluctuation = 2;
+        fluctuation = 2;*/
 
         for (int x = 0; x < sizeMapX; x++)
         {
@@ -402,8 +401,6 @@ public class Generation : NetworkBehaviour
                 MapString += crd;
             }
         }
-
-        Debug.Log(MapString);
     }
 
     void PrintTab(int[,] tab)
@@ -427,14 +424,14 @@ public class Generation : NetworkBehaviour
 
         map = new int[sizeMapX, sizeMapY];
 
-        sizeMapZ = 20;
+        /*sizeMapZ = 20;
         nbSmooth = 3;
 
         cellSize = 1;
         surfaceBaseX = 8;
         sizeMapX = 30;
         sizeMapY = 40;
-        fluctuation = 2;
+        fluctuation = 2;*/
 
         //PrintTab(map);
         string crd = MapString.ToString();
