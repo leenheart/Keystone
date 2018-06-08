@@ -54,6 +54,7 @@
      <Compile Include="Assets\Audio.cs" />
      <Compile Include="Assets\BlowOfHorn.cs" />
      <Compile Include="Assets\Caméra\CameraInGame.cs" />
+     <Compile Include="Assets\Génération map\GenerateurNuage.cs" />
      <Compile Include="Assets\Génération map\Generation.cs" />
      <Compile Include="Assets\Guardian.cs" />
      <Compile Include="Assets\Keratine Arrow.cs" />
@@ -66,6 +67,7 @@
      <Compile Include="Assets\Scéne\ButtonManager.cs" />
      <Compile Include="Assets\WorldSkies\Demo\Scripts\LookCamera.cs" />
      <Compile Include="Assets\WorldSkies\Demo\Scripts\SkyboxChanger.cs" />
+     <None Include="Assets\Outline.shader" />
      <None Include="Assets\BOXOPHOBIC\Skybox - Cubemap Extended\Shaders\Skybox - Cubemap Extended.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

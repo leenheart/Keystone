@@ -18,6 +18,8 @@ public class Server : MonoBehaviour
 
     private int nbReady = 0;
 
+    private float nextUpdate = 0;
+
     private const int MAW_CONNECTION = 100;
     private int port = 7777;
 
@@ -73,7 +75,21 @@ public class Server : MonoBehaviour
         }
         if (GameLunch && players.Count < 2)
         {
+            Application.Quit();
             //Erreur disconnect mette en pause ou quelqu chose
+        }
+        if (nextUpdate <= Time.time)
+        {
+
+            foreach (KeyValuePair<int, Player> dic in players)
+            {
+
+                Transform t = dic.Value.avatar.transform;
+                //Debug.Log(t.position.x + "%" + t.position.y + "%" + t.position.z + "%" + t.rotation.x + "%" + t.rotation.y + "%" + t.rotation.z);
+                Send("UpdatePlayer|" + dic.Key + "|" + t.position.x + "%" + t.position.y + "%" + t.position.z + "%" + t.rotation.x + "%" + t.rotation.y + "%" + t.rotation.z, unreliableChannel, clients);
+            }
+
+            nextUpdate = Time.time + 0.1f;
         }
 
         int recHostId;
@@ -92,12 +108,12 @@ public class Server : MonoBehaviour
         switch (recData)
         {
             case NetworkEventType.ConnectEvent:
-               // Debug.Log("Player" + connectionId + "has connected");
+                Debug.Log("Player" + connectionId + "has connected");
                 OnConnection(connectionId);
                 break;
             case NetworkEventType.DataEvent:
                 string msg = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
-               // Debug.Log("Receive from " + connectionId + " :" + msg);
+                //Debug.Log("Receive from " + connectionId + " :" + msg);
                 string[] splitData = msg.Split('|');
 
                 switch (splitData[0])
@@ -143,6 +159,7 @@ public class Server : MonoBehaviour
                                 dic.Value.avatar.GetComponent<Rigidbody>().isKinematic = false;
                             }
                             Send("Start|", reliableChannel, clients);
+                            PassTurn();
                         }
                         DefenderId = connectionId;
                         break;
@@ -161,11 +178,33 @@ public class Server : MonoBehaviour
             case NetworkEventType.DisconnectEvent:
                 Debug.Log("Player" + connectionId + "has deconnected");
                 OnDisconnection(connectionId);
+                Application.Quit();
                 break;
 
             case NetworkEventType.BroadcastEvent:
 
                 break;
+        }
+    }
+
+    private void sendObstacle()
+    {
+        //recuperer et envoyer tous les obstacle !
+        foreach (GameObject g in GameObject.FindGameObjectsWithTag("Obstacle"))
+        {
+            string name = "";
+            if (g.name == "dec(Clone)")
+            {
+                name = "dec";
+            }
+            else
+            {
+                name = "tree";
+            }
+
+            Transform t = g.transform;
+            Send("Obstacle|" + name + "|" + t.position.x + "|" + t.position.y + "|" + t.position.z , reliableChannel, clients);
+
         }
     }
 
@@ -233,20 +272,22 @@ public class Server : MonoBehaviour
     public void GenerateMap(int cnnId)
     {
         string s = Map.GetComponent<Generation>().MapString;
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < /*size map X*/50; i++)
         {
-            // Debug.Log(s.Substring(40 * i, 40 ));
-            Send("EM|" + s.Substring(40 * i, 40), reliableChannel, cnnId);
+            //Debug.Log(s.Substring(50 * i, 50 ));
+            Send("EM|" + s.Substring(50 * i, 50), reliableChannel, cnnId);
         }
 
         {
             Send("GM|", reliableChannel, cnnId);
         }
+
+        sendObstacle();
     }
 
     private void SpawnPlayer(string playerName, int cnnId)
     {
-        GameObject go = Instantiate(playerPrefab, new Vector3(2, 2, 20), new Quaternion());
+        GameObject go = Instantiate(playerPrefab, new Vector3(2, 3, 25), new Quaternion());
 
         Player p = new Player();
         p.avatar = go;
@@ -258,7 +299,7 @@ public class Server : MonoBehaviour
         if (cnnId == hostId)
         {
             //Do Some staff to spawn
-            go.transform.position = new Vector3(28, 2, 20);
+            go.transform.position = new Vector3(48, 3, 25);
             p.DefOrAtt = "Def";
             isStarted = true;
         }
@@ -284,6 +325,7 @@ public class Server : MonoBehaviour
             {
                 dic.Value.avatar.GetComponent<Rigidbody>().isKinematic = false;
             }
+            PassTurn();
         }
     }
 
@@ -296,7 +338,7 @@ public class Server : MonoBehaviour
     public void Moove(int cnnId, string posXY)
     {
         string[] coord = posXY.Split('%');
-        players[cnnId].avatar.GetComponent<Guardian>().Moove(new Vector3(int.Parse(coord[0].Split('.')[0]),0, int.Parse(coord[1].Split('.')[0])));
+        players[cnnId].avatar.GetComponent<Guardian>().Moove(new Vector3(int.Parse(coord[0].Split('.')[0]), 0, int.Parse(coord[1].Split('.')[0])));
         //Send("MOOVE|" + cnnId + "|" + posXY, reliableChannel, clients);
     }
 
@@ -320,7 +362,6 @@ public class Server : MonoBehaviour
         players[cnnId].avatar.GetComponent<Guardian>().Spell3Activation(new Vector3(int.Parse(coord[0].Split('.')[0]), 0, int.Parse(coord[1].Split('.')[0])));
         //Send("SPELL3|" + cnnId + "|" + posXY, reliableChannel, clients);
     }
-
     public void Spell4(int cnnId, string posXY)
     {
         string[] coord = posXY.Split('%');
@@ -330,7 +371,7 @@ public class Server : MonoBehaviour
 
     public void Moove(Vector3 hitPoint)
     {
-        Send("MOOVE|" + hostId + "|" + hitPoint.x + "%" + hitPoint.z , reliableChannel, clients);
+        Send("MOOVE|" + hostId + "|" + hitPoint.x + "%" + hitPoint.z, reliableChannel, clients);
     }
 
     public void Spell(Vector3 hitPoint, int NumSpell)

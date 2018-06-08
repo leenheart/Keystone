@@ -32,15 +32,21 @@ public class ButtonManager : MonoBehaviour
 
 
 
-    public void GenerateMap()
+    public void GenerateMapClient()
     {
         if (GameObject.Find("Client"))
         {
-        GameObject.Find("Client").GetComponent<Client>().GenerateMap();
+            GameObject.Find("Client").GetComponent<Client>().GenerateMap();
         }
-        else
+
+    }
+
+    public void GenerateMapServer()
+    {
+        if (GameObject.Find("Server"))
         {
             GameObject.Find("MapGeneration 1").GetComponent<Generation>().Generate();
+            GameObject.Find("MapGeneration 1").GetComponent<Generation>().generateObstacle();
         }
 
     }
@@ -55,7 +61,7 @@ public class ButtonManager : MonoBehaviour
         {
             GameObject.Find("Server").GetComponent<Server>().Ready();
         }
-
+        GameObject.Find("Button Ready").SetActive(false);
     }
 
     public void SetPlayeurGuardian(GameObject pl)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KeratineArrow : MonoBehaviour {
+public class KeratineArrow : MonoBehaviour
+{
 
 }

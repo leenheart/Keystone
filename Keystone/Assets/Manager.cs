@@ -15,6 +15,8 @@ public class Manager : MonoBehaviour
     public Image Spell3Button;
     public Image Spell4Button;
 
+    public bool isStart = false;
+
     public int turn;
     public float endNextTurn;
 
@@ -45,12 +47,23 @@ public class Manager : MonoBehaviour
     void Start()
     {
         AbleToDo = true;
-       // Attacker = GameObject.Find("PlayerOhnir(Clone)");
+        // Attacker = GameObject.Find("PlayerOhnir(Clone)");
         DontDestroyOnLoad(gameObject);
         Selection = "";
         turn = 0;
         endNextTurn = turnTime;
         PlayeurNow = Attacker;
+
+        MooveButton = GameObject.Find("Button deplacement").GetComponent<Image>();
+        Spell1Button = GameObject.Find("Spell 1").GetComponent<Image>();
+        Spell2Button = GameObject.Find("Spell 2").GetComponent<Image>();
+        Spell3Button = GameObject.Find("Spell 3").GetComponent<Image>();
+        Spell4Button = GameObject.Find("Spell 4").GetComponent<Image>();
+
+        textPlayerTurn = GameObject.Find("TurnPlayeur").GetComponent<Image>();
+        textTimeToPlay = GameObject.Find("Timer").GetComponent<Text>();
+        Mana = GameObject.Find("Mana Bar").GetComponent<Image>();
+        Vie = GameObject.Find("HP bar").GetComponent<Image>();
 
     }
 
@@ -72,9 +85,10 @@ public class Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //if (!isStart) return;
 
         DiffTimeTurn = endNextTurn - Time.time;
-        textTimeToPlay.text = (DiffTimeTurn).ToString();
+        textTimeToPlay.text = ((int)DiffTimeTurn).ToString();
         if (Time.time >= endNextTurn) //passage au tour suivant
         {
 
@@ -99,7 +113,10 @@ public class Manager : MonoBehaviour
                 Spell3Button.color = Color.white;
                 Spell4Button.color = Color.white;
                 MooveButton.color = Color.white;
-                GameObject.Find("TurnPlayeur").GetComponent<Image>().sprite = Def;
+                textPlayerTurn.sprite = Def;
+                Vector3 vect = GameObject.Find("TurnPlayeur").transform.position;
+                vect.x += 600;
+                GameObject.Find("TurnPlayeur").transform.position = vect;
                 PlayeurNow = Defender;
             }
             else
@@ -113,7 +130,10 @@ public class Manager : MonoBehaviour
                 Spell3Button.color = Color.white;
                 Spell4Button.color = Color.white;
                 MooveButton.color = Color.white;
-                GameObject.Find("TurnPlayeur").GetComponent<Image>().sprite = Att;
+                textPlayerTurn.sprite = Att;
+                Vector3 vect = GameObject.Find("TurnPlayeur").transform.position;
+                vect.x -= 600;
+                GameObject.Find("TurnPlayeur").transform.position = vect;
                 PlayeurNow = Attacker;
             }
         }
@@ -135,7 +155,13 @@ public class Manager : MonoBehaviour
                     Vector3 look = hit.point - PlayeurNow.transform.position;
                     look.y = 0;
                     PlayeurNow.GetComponentsInChildren<MeshRenderer>()[2].gameObject.transform.rotation = Quaternion.LookRotation(look);
-                    PlayeurNow.GetComponentsInChildren<MeshRenderer>()[2].gameObject.transform.localScale = new Vector3(3,0.001f,CalculRange(hit.point, PlayeurNow.transform.position)/20);
+                    PlayeurNow.GetComponentsInChildren<MeshRenderer>()[2].gameObject.transform.localScale = new Vector3(3, 0.001f, CalculRange(hit.point, PlayeurNow.transform.position) / 20);
+                }
+                else if (Selection == "Moove")
+                {
+                    int dist = (int)CalculRange(hit.point, PlayeurNow.transform.position) / 2;
+                    if (dist * 10 <= PlayeurNow.GetComponent<Guardian>().OneMoove * PlayeurNow.GetComponent<Guardian>().Endurance)
+                        PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].gameObject.transform.localScale = new Vector3(dist * 10, 0.001f, dist * 10);
                 }
 
                 if (AbleToDo && Input.GetButtonDown("Fire1"))
@@ -229,8 +255,8 @@ public class Manager : MonoBehaviour
     }
 
     public void Moove()
-    { 
-        if (PlayerAvatar == PlayeurNow )
+    {
+        if (PlayerAvatar == PlayeurNow)
         {
             PlayeurNow.GetComponent<Guardian>().MooveSelection();
             MooveButton.color = Color.green;
@@ -239,7 +265,7 @@ public class Manager : MonoBehaviour
     }
     public void Spell1()
     {
-        if (PlayerAvatar == PlayeurNow &&  AbleToDo &&  PlayeurNow.GetComponent<Guardian>().Spell1Selection())
+        if (PlayerAvatar == PlayeurNow && AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell1Selection())
         {
             Selection = "Spell1";
             Spell1Button.color = Color.green;
@@ -247,7 +273,7 @@ public class Manager : MonoBehaviour
     }
     public void Spell2()
     {
-        if (PlayerAvatar == PlayeurNow &&  AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell2Selection())
+        if (PlayerAvatar == PlayeurNow && AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell2Selection())
         {
             Selection = "Spell2";
             Spell2Button.color = Color.green;
@@ -255,7 +281,7 @@ public class Manager : MonoBehaviour
     }
     public void Spell3()
     {
-        if (PlayerAvatar == PlayeurNow &&  AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell3Selection())
+        if (PlayerAvatar == PlayeurNow && AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell3Selection())
         {
             Selection = "Spell3";
             Spell3Button.color = Color.green;
@@ -264,7 +290,7 @@ public class Manager : MonoBehaviour
     }
     public void Spell4()
     {
-        if (PlayerAvatar == PlayeurNow && AbleToDo &&PlayeurNow.GetComponent<Guardian>().Spell4Selection())
+        if (PlayerAvatar == PlayeurNow && AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell4Selection())
         {
             Selection = "Spell4";
             Spell4Button.color = Color.green;

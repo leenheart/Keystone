@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
-public abstract class Guardian : MonoBehaviour {
+public abstract class Guardian : MonoBehaviour
+{
 
 
     public float HpMax;
@@ -36,15 +37,20 @@ public abstract class Guardian : MonoBehaviour {
 
     public void Moove(Vector3 hitPoint)
     {
-            GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
-            Endurance -= MooveRangeForEndurance;
-            AbleToDo = false;
-            Vector3 look = hitPoint - transform.position;
-            look.y = 0;
-            transform.rotation = Quaternion.LookRotation(look);
+
+        //if (GameObject.Find("Server"))
+        {
+            MoovingSpeed = 3;
             Mooving = true;
             HitPoint = hitPoint;
-            MoovingSpeed = 3;
+            AbleToDo = false;
+        }
+
+        GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+        Endurance -= MooveRangeForEndurance;
+        Vector3 look = hitPoint - transform.position;
+        look.y = 0;
+        transform.rotation = Quaternion.LookRotation(look);
     }
 
     public void Update()
@@ -59,7 +65,14 @@ public abstract class Guardian : MonoBehaviour {
             }
             else
             {
-               transform.position += transform.forward * Time.deltaTime * MoovingSpeed;
+                Debug.Log(GameObject.Find("MapGeneration 1").GetComponent<Generation>().map);
+                Debug.Log(GameObject.Find("MapGeneration 1").GetComponent<Generation>().map[(int)transform.position.x, (int)transform.position.y]);
+                Debug.Log(GameObject.Find("MapGeneration 1").GetComponent<Generation>().map[(int)transform.position.x, (int)transform.position.y] == 1);
+                if (GameObject.Find("MapGeneration 1").GetComponent<Generation>().map[(int) transform.position.x, (int) transform.position.y] == 1)
+                {
+                    transform.position += transform.forward * Time.deltaTime * MoovingSpeed;
+                }
+                
             }
         }
     }
@@ -72,7 +85,7 @@ public abstract class Guardian : MonoBehaviour {
 
     public bool MooveSelection()
     {
-        if ( AbleToDo && Endurance >= MooveRangeForEndurance)
+        if (AbleToDo && Endurance >= MooveRangeForEndurance)
         {
             GetComponentsInChildren<MeshRenderer>()[1].enabled = true;
             //afficher range de deplacement

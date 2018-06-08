@@ -101,7 +101,7 @@ public class Client : MonoBehaviour
                 break;
 
             case NetworkEventType.DisconnectEvent:
-                SceneManager.LoadScene("menu");
+                Application.Quit();
                 break;
 
             case NetworkEventType.DataEvent:
@@ -141,6 +141,13 @@ public class Client : MonoBehaviour
                         players[int.Parse(splitData[1])].avatar.GetComponent<Guardian>().Spell4Activation(new Vector3(int.Parse(coord[0].Split('.')[0]), 0, int.Parse(coord[1].Split('.')[0])));
                         break;
 
+                    case "UpdatePlayer":
+                        coord = splitData[2].Split('%');
+                        // Debug.Log("avant  " + players[int.Parse(splitData[1])].avatar.transform.position);
+                        players[int.Parse(splitData[1])].avatar.transform.position = new Vector3(float.Parse(coord[0]), float.Parse(coord[1]), float.Parse(coord[2]));
+                        //players[int.Parse(splitData[1])].avatar.transform.rotation = Quaternion.Euler(float.Parse(coord[3]), float.Parse(coord[4]), float.Parse(coord[5]));
+                        //Debug.Log("apres  " + players[int.Parse(splitData[1])].avatar.transform.rotation);
+                        break;
 
                     case "PASSTURN":
                         GameObject.Find("Manager").GetComponent<Manager>().endNextTurn = Time.time;
@@ -163,12 +170,17 @@ public class Client : MonoBehaviour
                         break;
 
                     case "GM":
-                        //GameObject.Find("MapGeneration 1").GetComponent<Generation>().GenerateMap();
                         GameObject.Find("MapGeneration 1").GetComponent<Generation>().Generate();
                         break;
 
                     case "EM":
+                        Debug.Log(splitData[1]);
                         GameObject.Find("MapGeneration 1").GetComponent<Generation>().MapString += splitData[1];
+                        break;
+
+                    case "Obstacle":
+                        ///Debug.Log(splitData[1] + splitData[2] + splitData[3] + splitData[4]);
+                        DontDestroyOnLoad(Instantiate(Resources.Load(splitData[1]), new Vector3(float.Parse(splitData[2]), float.Parse(splitData[3]), float.Parse(splitData[4])), new Quaternion()));
                         break;
 
                     case "CNN":
@@ -210,7 +222,7 @@ public class Client : MonoBehaviour
 
     private void SpawnPlayer(string playerName, int cnnId)
     {
-        GameObject go = Instantiate(playerPrefab, new Vector3(2, 2, 20), new Quaternion());
+        GameObject go = Instantiate(playerPrefab, new Vector3(2, 3, 25), new Quaternion());
 
         Player p = new Player();
         p.avatar = go;
@@ -227,7 +239,8 @@ public class Client : MonoBehaviour
         else
         {
             p.DefOrAtt = "Def";
-            go.transform.position = new Vector3(28, 2, 20);        }
+            go.transform.position = new Vector3(48, 3, 25);
+        }
 
         players.Add(cnnId, p);
 
@@ -242,7 +255,7 @@ public class Client : MonoBehaviour
 
     private void Send(string message, int channelId)
     {
-       // Debug.Log("Sending : " + message);
+        // Debug.Log("Sending : " + message);
         byte[] msg = Encoding.Unicode.GetBytes(message);
         NetworkTransport.Send(hostId, connectionId, channelId, msg, message.Length * sizeof(char), out error);
 
@@ -266,7 +279,7 @@ public class Client : MonoBehaviour
 
     public void Moove(Vector3 hitPoint)
     {
-        Send("MOOVE|" + hitPoint.x + "%" + hitPoint.z , reliableChannel);
+        Send("MOOVE|" + hitPoint.x + "%" + hitPoint.z, reliableChannel);
     }
 
     public void Spell(Vector3 hitPoint, int NumSpell)

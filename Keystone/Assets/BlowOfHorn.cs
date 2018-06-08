@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BlowOfHorn : MonoBehaviour {
+public class BlowOfHorn : MonoBehaviour
+{
     void OnCollisionEnter(Collision collider)
     {
-        
+
         if (collider.gameObject.name == "arbre(Clone)" || collider.gameObject.name == "dec(Clone)" || collider.gameObject.name == "Castle")
         {
             Destroy(gameObject);
@@ -16,12 +17,14 @@ public class BlowOfHorn : MonoBehaviour {
         }
     }
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
 
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 }

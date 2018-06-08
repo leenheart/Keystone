@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class Ohnir : Guardian {
+public class Ohnir : Guardian
+{
 
     public GameObject Arrow;
 
@@ -31,14 +32,14 @@ public class Ohnir : Guardian {
     }
     public override bool Spell3Selection()
     {
-        if (Endurance >= 200)        
+        if (Endurance >= 200)
         {
             GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
             return true;
         }
         return false;
     }
-    public override  bool Spell4Selection()
+    public override bool Spell4Selection()
     {
         if (Endurance >= 700)
         {
@@ -73,8 +74,8 @@ public class Ohnir : Guardian {
     }
     public override void Spell3Activation(Vector3 hitPoint)
     {
-    
-            
+
+
         Vector3 look = hitPoint - transform.position;
         look.y = 0;
         transform.rotation = Quaternion.LookRotation(look);
@@ -96,7 +97,7 @@ public class Ohnir : Guardian {
         if (collider.gameObject.tag == "Player")
         {
             HitPoint = transform.position;
-            Debug.Log(collider.gameObject.name + "something append " );
+            Debug.Log(collider.gameObject.name + "something append ");
             collider.gameObject.GetComponent<Guardian>().TakeDammage(250);
         }
     }
@@ -111,10 +112,13 @@ public class Ohnir : Guardian {
             Vector3 look = hitPoint - transform.position;
             look.y = 0;
             transform.rotation = Quaternion.LookRotation(look);
-            Mooving = true;
-            MoovingSpeed = 10;
-            HitPoint = hitPoint;
-            AbleToDo = false;
+            // if (GameObject.Find("Server"))
+            {
+                MoovingSpeed = 10;
+                Mooving = true;
+                HitPoint = hitPoint;
+                AbleToDo = false;
+            }
         }
         Endurance -= Spell4ForEndurance;
 

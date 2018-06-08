@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using UnityEngine.Networking;
+
 
 public class Generation : MonoBehaviour
 {
@@ -17,7 +16,7 @@ public class Generation : MonoBehaviour
 
     public string MapString;
 
-    private int[,] map;
+    public int[,] map;
 
     private int[,] cielTab;
     private int[][,] underMap;
@@ -42,10 +41,10 @@ public class Generation : MonoBehaviour
 
     void MakeSurface(int y, int x, ref int t, ref int v)
     {
-        if (map[x, y - 1] == 0)
+        if (y <= 1 || map[x, y - 1] == 0)
         {
 
-            if (x != 0 && map[x - 1, y - 1] == 1 && (x >= sizeMapX - 1 || map[x + 1, y - 1] == 0))
+            if (x != 0 && y != 0 && map[x - 1, y - 1] == 1 && (x >= sizeMapX - 1 || map[x + 1, y - 1] == 0))
             {
                 triangles[t] = v - 1;
                 triangles[t + 1] = v;
@@ -53,7 +52,7 @@ public class Generation : MonoBehaviour
 
                 t += 3;
             }
-            else if (x < sizeMapX - 1 && map[x + 1, y - 1] == 1 && (x == 0 || map[x - 1, y - 1] == 0))
+            else if (y == 0 || (x < sizeMapX - 1 && map[x + 1, y - 1] == 1 && (x == 0 || map[x - 1, y - 1] == 0)))
             {
                 triangles[t] = v + (sizeMapY + 1);
                 triangles[t + 2] = v;
@@ -95,7 +94,7 @@ public class Generation : MonoBehaviour
         if ((y == 0 || tab[x, y - 1] == 0))
         {
             // faces Y
-            if (x != 0 && (y == 0 || tab[x - 1, y - 1] == 1) && (y == 0 || x >= sizeMapX - 1 || tab[x + 1, y - 1] == 0) && tabDessus[x, y - 1] == 1) // diagonal gauche
+            if (x != 0 && (y == 0 || tab[x - 1, y - 1] == 1) && (y == 0 || x >= sizeMapX - 1 || tab[x + 1, y - 1] == 0) && (y == 0 || tabDessus[x, y - 1] == 1)) // diagonal gauche
             {
                 t += 6;
                 triangles[t] = v - 1;
@@ -103,7 +102,7 @@ public class Generation : MonoBehaviour
                 triangles[t + 1] = triangles[t + 4] = v + (sizeMapY + 1);
                 triangles[t + 5] = v + (sizeMapY + 1) * (sizeMapX + 1) + (sizeMapY + 1);
             }
-            else if (x < sizeMapX - 1 && (y == 0 || tab[x + 1, y - 1] == 1) && (x == 0 || tab[x - 1, y - 1] == 0) && tabDessus[x, y - 1] == 1) // diagonal droite
+            else if (x < sizeMapX - 1 && (y == 0 || tab[x + 1, y - 1] == 1) && (x == 0 || y == 0 || tab[x - 1, y - 1] == 0) && (y == 0 || tabDessus[x, y - 1] == 1)) // diagonal droite
             {
 
                 t += 6;
@@ -142,7 +141,7 @@ public class Generation : MonoBehaviour
                 triangles[t + 3] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1 + sizeMapY + 1;
 
 
-                if ((x < sizeMapX - 1 && tab[x + 1, y] == 1 && tab[x + 2, y] == 1))
+                if ((x < sizeMapX - 2 && tab[x + 1, y] == 1 && tab[x + 2, y] == 1))
                 {
                     triangles[t + 2] = v + (sizeMapY + 1) * (sizeMapX + 1) + 1 + sizeMapY + 1;
                     triangles[t + 1] = v + (sizeMapY + 1) * (sizeMapX + 1) + sizeMapY + 1;
@@ -228,7 +227,7 @@ public class Generation : MonoBehaviour
                     triangles[t + 1] = v + 1 + sizeMapY + 1;
                     triangles[t + 2] = v + (sizeMapY + 1) * (sizeMapX + 1) + sizeMapY + 1;
 
-                    if ((x < sizeMapX - 1 && tab[x + 1, y] == 1 && tab[x + 2, y] == 1))
+                    if ((x < sizeMapX - 2 && tab[x + 1, y] == 1 && tab[x + 2, y] == 1))
                     {
                         triangles[t + 3] = v + 1 + sizeMapY + 1;
                         triangles[t + 4] = v + (sizeMapY + 1) * (sizeMapX + 1) + sizeMapY + 1;
@@ -282,6 +281,79 @@ public class Generation : MonoBehaviour
         sizeMapY = 40;
         fluctuation = 2;*/
     }
+
+    private void Smooth(int nbSmooth)
+    {
+        for (int z = 0; z < nbSmooth; z++)
+        {
+            for (int x = 0; x < sizeMapX; x++)
+            {
+                for (int y = 0; y < sizeMapY; y++)
+                {
+                    int sommeEntoure = 0;
+                    for (int i = -1; i < 2; i++)
+                    {
+                        for (int j = -1; j < 2; j++)
+                        {
+                            if (x + i > 0 && x + i < sizeMapX && y + j > 0 && y + j < sizeMapY)
+                            {
+                                sommeEntoure += map[x + i, y + j];
+                            }
+
+                        }
+                    }
+                    if (sommeEntoure > 3)
+                    {
+                        map[x, y] = 1;
+                    }
+                    else if (sommeEntoure == 1 || sommeEntoure == 2 || sommeEntoure == 0)
+                    {
+                        map[x, y] = 0;
+                    }
+
+                }
+            }
+        }
+    }
+
+
+    private void GenerateTrou(int x, int y, int ZeroOrOne)
+    {
+
+        int hautmax = Random.Range(y - 3 - ZeroOrOne, y);
+        int basmax = Random.Range(y + 1, y + 3 + ZeroOrOne);
+
+        int gauchemax = Random.Range(x - 6 - ZeroOrOne, x);
+        int droitemax = Random.Range(x + 1, x + 6 + ZeroOrOne);
+
+
+        // Debug.Log("generate trou :" + x + " " + y +"  " + ZeroOrOne + " haut " + hautmax + " bas " + basmax);
+        for (int xx = gauchemax; xx < droitemax; xx++)
+        {
+            for (int yy = hautmax; yy < basmax; yy++)
+            {
+                if (ZeroOrOne == 1)
+                {
+                    if (xx <= 0) return;
+                    if (yy <= 0) return;
+                    if (xx >= sizeMapX - 1) return;
+                    if (yy >= sizeMapY - 1) return;
+                }
+                else
+                {
+                    if (xx <= 3) return;
+                    if (yy <= 3) return;
+                    if (xx >= sizeMapX - 3) return;
+                    if (yy >= sizeMapY - 3) return;
+                }
+
+                //Debug.Log(xx + " " + yy);
+                map[xx, yy] = ZeroOrOne;
+            }
+        }
+
+    }
+
     public void GenerateMap()
     {
         DontDestroyOnLoad(gameObject);
@@ -321,10 +393,12 @@ public class Generation : MonoBehaviour
             }
         }
 
-        for (int y = sizeMapY / 2 - surfaceBaseX / 2 + UnityEngine.Random.Range(-6, 0); y < sizeMapY / 2 + surfaceBaseX / 2 + UnityEngine.Random.Range(0, 6); y++)
+        for (int y = sizeMapY / 2 - surfaceBaseX / 2 + Random.Range(-6, 0); y < sizeMapY / 2 + surfaceBaseX / 2 + Random.Range(0, 6); y++)
         {
             map[0, y] = 1;
         }
+
+        Debug.Log(map);
 
         //random
         int debut = -1;
@@ -347,8 +421,8 @@ public class Generation : MonoBehaviour
             }
 
             //ajout nouvelle ligne avec le random
-            randomDebut = UnityEngine.Random.Range(-fluctuation - randomDebut, fluctuation + randomDebut);
-            randmFin = UnityEngine.Random.Range(-fluctuation - randmFin, fluctuation + randmFin);
+            randomDebut = Random.Range(-fluctuation - randomDebut, fluctuation + randomDebut);
+            randmFin = Random.Range(-fluctuation - randmFin, fluctuation + randmFin);
             for (int y = 0; y < sizeMapY; y++)
             {
                 if (y >= debut + randomDebut && y < fin + randmFin)
@@ -359,36 +433,76 @@ public class Generation : MonoBehaviour
         }
 
         //complete map
-        for (int z = 0; z < nbSmooth; z++)
+        Smooth(nbSmooth - 1);
+        int nbcase = 0;
+
+        //generate trou
+        while (nbcase > 1000)
         {
+
+            if (Random.Range(0, 1) < 0.6)
+            {
+                int centreX = Random.Range(8, sizeMapX - 8);
+                int centreY = Random.Range(8, sizeMapY - 8);
+
+                while (map[centreX, centreY] != 1)
+                {
+                    centreX = Random.Range(8, sizeMapX - 8);
+                    centreY = Random.Range(8, sizeMapY - 8);
+                }
+
+                //GenerateTrouOr(centreX, centreY, Random.Range(1, 3), 0);
+                GenerateTrou(centreX, centreY, 0);
+                GenerateTrou(centreX + 1, centreY, 0);
+                GenerateTrou(centreX, centreY + 1, 0);
+                GenerateTrou(centreX, centreY - 1, 0);
+            }
+            nbcase = 0;
             for (int x = 0; x < sizeMapX; x++)
             {
                 for (int y = 0; y < sizeMapY; y++)
                 {
-                    int sommeEntoure = 0;
-                    for (int i = -1; i < 2; i++)
-                    {
-                        for (int j = -1; j < 2; j++)
-                        {
-                            if (x + i > 0 && x + i < sizeMapX && y + j > 0 && y + j < sizeMapY)
-                            {
-                                sommeEntoure += map[x + i, y + j];
-                            }
-
-                        }
-                    }
-                    if (sommeEntoure > 3)
-                    {
-                        map[x, y] = 1;
-                    }
-                    else if (sommeEntoure == 1 || sommeEntoure == 2 || sommeEntoure == 0)
-                    {
-                        map[x, y] = 0;
-                    }
+                    nbcase += map[x, y];
 
                 }
             }
+            Debug.Log(nbcase);
         }
+
+        nbcase = 0;
+        while (nbcase < 600)
+        {
+            //generate petite ile
+            if (Random.Range(0, 1) < 0.7)
+            {
+                int centreX = Random.Range(0, sizeMapX);
+                int centreY = Random.Range(0, sizeMapY);
+
+                while (map[centreX, centreY] != 0)
+                {
+                    centreX = Random.Range(0, sizeMapX);
+                    centreY = Random.Range(0, sizeMapY);
+                }
+
+                //GenerateTrouOr(centreX, centreY, Random.Range(2, 5), 1);
+                GenerateTrou(centreX, centreY, 1);
+                GenerateTrou(centreX + 1, centreY, 1);
+                GenerateTrou(centreX, centreY + 1, 1);
+                GenerateTrou(centreX, centreY - 1, 1);
+            }
+            nbcase = 0;
+            for (int x = 0; x < sizeMapX; x++)
+            {
+                for (int y = 0; y < sizeMapY; y++)
+                {
+                    nbcase += map[x, y];
+
+                }
+            }
+            Debug.Log(nbcase);
+        }
+        Smooth(1);
+
 
         // create the string:
         MapString = "";
@@ -436,13 +550,15 @@ public class Generation : MonoBehaviour
         //PrintTab(map);
         string crd = MapString.ToString();
         int index = 0;
-
+        //Debug.Log(crd.Length);
         for (int i = 0; i < sizeMapX; i++)
         {
             for (int j = 0; j < sizeMapY; j++)
             {
-                map[i, j] = crd[index] -48;
+                //Debug.Log(index +" " + crd[index] + " -48 " );
+                map[i, j] = crd[index] - 48;
                 index++;
+
             }
         }
 
@@ -546,7 +662,12 @@ public class Generation : MonoBehaviour
             {
                 for (int y = 0; y <= sizeMapY; y++)
                 {
-                    vertices[v] = new Vector3((x * cellSize) + UnityEngine.Random.Range(-0.25f, 0.25f) /*- vertexOffSet*/, -z, (y * cellSize) + UnityEngine.Random.Range(-0.25f, 0.25f) /*- vertexOffSet*/);
+                    float r = 0;
+                    if (z != 0)
+                    {
+                        r = UnityEngine.Random.Range(-0.25f, 0.25f);
+                    }
+                    vertices[v] = new Vector3((x * cellSize) + UnityEngine.Random.Range(-0.25f, 0.25f) /*- vertexOffSet*/, -(z * 3) + r, (y * cellSize) + UnityEngine.Random.Range(-0.25f, 0.25f) /*- vertexOffSet*/);
                     v++;
                 }
             }
@@ -596,21 +717,116 @@ public class Generation : MonoBehaviour
 
         GetComponent<MeshCollider>().sharedMesh = mesh;
 
-        int random = 0;
-        int randomArbre = 0;
+
+        //pont
+        int nbVide = 0;
+
         for (int x = 0; x < sizeMapX; x++)
         {
             for (int y = 0; y < sizeMapY; y++)
             {
-                random = UnityEngine.Random.Range(0, 15);
-                randomArbre = UnityEngine.Random.Range(0, 50);
-                if (random == 1 && map[x, y] == 1)
+                if (map[x, y] == 0 && (x != 0 && map[x - 1, y] == 1))
                 {
-                    Instantiate(Resources.Load("dec"), new Vector3(x, 0, y), Quaternion.identity);
+                    nbVide++;
+                    if (nbVide > 4)
+                    {
+                        for (int xx = x; xx < sizeMapX; xx++)
+                        {
+                            if (map[xx, y - 2] == 1)
+                            {
+                                DontDestroyOnLoad(Instantiate(Resources.Load("Pont 2"), new Vector3(x - 1, 0, y - 2), new Quaternion()));
+                                for (int xxx = x; xxx < xx + 2; xxx++)
+                                {
+                                    DontDestroyOnLoad(Instantiate(Resources.Load("pont"), new Vector3(xxx, 0, y - 2), new Quaternion()));
+                                }
+                                DontDestroyOnLoad(Instantiate(Resources.Load("Pont 2"), new Vector3(xx + 2, 0, y - 2), Quaternion.Inverse(new Quaternion())));
+                                xx = sizeMapX;
+                            }
+                        }
+                        y += 4;
+                        nbVide = 0;
+                    }
                 }
-                else if (randomArbre == 1 && map[x, y] == 1)
+                else
                 {
-                    Instantiate(Resources.Load("arbre"), new Vector3(x, 1, y), new Quaternion(0, -90, -90, 0));
+                    nbVide = 0;
+                }
+            }
+        }
+
+        for (int y = 0; y < sizeMapY; y++)
+        {
+            for (int x = 0; x < sizeMapX; x++)
+            {
+                if (map[x, y] == 0 && (y != 0 && map[x, y - 1] == 1))
+                {
+                    nbVide++;
+                    if (nbVide > 2)
+                    {
+                        for (int yy = y; yy < sizeMapY; yy++)
+                        {
+                            if (map[x - 1, yy] == 1)
+                            {
+                                DontDestroyOnLoad(Instantiate(Resources.Load("Pont 2"), new Vector3(x - 1, 0, y - 1), new Quaternion()));
+                                for (int yyy = y; yyy < yy + 2; yyy++)
+                                {
+                                    DontDestroyOnLoad(Instantiate(Resources.Load("pont"), new Vector3(x - 1, 0, yyy), new Quaternion()));
+                                }
+                                DontDestroyOnLoad(Instantiate(Resources.Load("Pont 2"), new Vector3(x - 1, 0, yy + 2), Quaternion.Inverse(new Quaternion())));
+                                yy = sizeMapY;
+                            }
+                        }
+                        x += 4;
+                        nbVide = 0;
+                    }
+                }
+                else
+                {
+                    nbVide = 0;
+                }
+            }
+        }
+
+    }
+
+    public void generateObstacle()
+    {
+        int random = 0;
+        int randomArbre = 0;
+
+        for (int x = 2; x < sizeMapX - 2; x++)
+        {
+            for (int y = 0; y < sizeMapY; y++)
+            {
+                if (map[x, y] == 1)
+                {
+
+                    int sommeEntoure = 0;
+                    for (int i = -1; i < 2; i++)
+                    {
+                        for (int j = -1; j < 2; j++)
+                        {
+                            if (x + i > 0 && x + i < sizeMapX && y + j > 0 && y + j < sizeMapY)
+                            {
+                                sommeEntoure += map[x + i, y + j];
+                            }
+
+                        }
+                    }
+                    if (sommeEntoure > 7)
+                    {
+                        random = Random.Range(0, 30);
+                        randomArbre = Random.Range(0, 50);
+
+                        if (random == 1)
+                        {
+                            DontDestroyOnLoad(Instantiate(Resources.Load("dec"), new Vector3(x, 0.25f, y), Quaternion.identity));
+                        }
+                        else if (randomArbre == 1)
+                        {
+                            DontDestroyOnLoad(Instantiate(Resources.Load("tree"), new Vector3(x, 2, y), new Quaternion()));
+                        }
+                    }
                 }
             }
         }
