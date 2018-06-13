@@ -2323,7 +2323,7 @@ Prefab:
     - target: {fileID: 114312279666127058, guid: 7072ba385f793cf418525e3c21bb84f7,
         type: 2}
       propertyPath: turnTime
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 114312279666127058, guid: 7072ba385f793cf418525e3c21bb84f7,
         type: 2}
