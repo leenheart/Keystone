@@ -388,4 +388,12 @@ public class Server : MonoBehaviour
     {
         Send("SPELL" + NumSpell + "|" + hostId + "|" + hitPoint.x + "%" + hitPoint.z, reliableChannel, clients);
     }
+
+    public void Refresh()
+    {
+        foreach( var i in players)
+        {
+            Send("Refresh|" + i.Key + "|" + i.Value.avatar.GetComponent<Guardian>().Hp, reliableChannel, clients);
+        }
+    }
 }

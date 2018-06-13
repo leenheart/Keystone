@@ -10,6 +10,8 @@ public class KeratineArrow : MonoBehaviour
     {
         if (collider.gameObject.tag == "Player")
         {
+            Destroy(this);
+            Destroy(gameObject);
             collider.gameObject.GetComponent<Guardian>().TakeDammage(dommage);
             Destroy(this);
             Destroy(gameObject);
@@ -19,5 +21,7 @@ public class KeratineArrow : MonoBehaviour
             Destroy(this);
             Destroy(gameObject);
         }
+        Destroy(this);
+        Destroy(gameObject);
     }
 }

@@ -115,6 +115,10 @@ public class Client : MonoBehaviour
                     case "":
                         break;
 
+                    case "Refresh":
+                        players[int.Parse(splitData[1])].avatar.GetComponent<Guardian>().Hp = int.Parse(splitData[2]);
+                        break;
+
                     case "MOOVE":
                         coord = splitData[2].Split('%');
                         players[int.Parse(splitData[1])].avatar.GetComponent<Guardian>().Moove(new Vector3(int.Parse(coord[0].Split('.')[0]), 0, int.Parse(coord[1].Split('.')[0])));
