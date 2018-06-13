@@ -119,22 +119,27 @@ public class Server : MonoBehaviour
                 {
                     case "MOOVE":
                         Moove(connectionId, splitData[1]);
+                        Refresh();
                         break;
 
                     case "SPELL1":
                         Spell1(connectionId, splitData[1]);
+                        Refresh();
                         break;
 
                     case "SPELL2":
                         Spell2(connectionId, splitData[1]);
+                        Refresh();
                         break;
 
                     case "SPELL3":
                         Spell3(connectionId, splitData[1]);
+                        Refresh();
                         break;
 
                     case "SPELL4":
                         Spell4(connectionId, splitData[1]);
+                        Refresh();
                         break;
 
                     case "PASSTURN":
@@ -349,6 +354,7 @@ public class Server : MonoBehaviour
     {
         string[] coord = posXY.Split('%');
         players[cnnId].avatar.GetComponent<Guardian>().Moove(new Vector3(int.Parse(coord[0].Split('.')[0]), 0, int.Parse(coord[1].Split('.')[0])));
+        Refresh();
         //Send("MOOVE|" + cnnId + "|" + posXY, reliableChannel, clients);
     }
 
@@ -356,6 +362,7 @@ public class Server : MonoBehaviour
     {
         string[] coord = posXY.Split('%');
         players[cnnId].avatar.GetComponent<Guardian>().Spell1Activation(new Vector3(int.Parse(coord[0].Split('.')[0]), 0, int.Parse(coord[1].Split('.')[0])));
+        Refresh();
         //Send("SPELL1|" + cnnId + "|" + posXY, reliableChannel, clients);
     }
 
@@ -363,6 +370,7 @@ public class Server : MonoBehaviour
     {
         string[] coord = posXY.Split('%');
         players[cnnId].avatar.GetComponent<Guardian>().Spell2Activation(new Vector3(int.Parse(coord[0].Split('.')[0]), 0, int.Parse(coord[1].Split('.')[0])));
+        Refresh();
         //Send("SPELL2|" + cnnId + "|" + posXY, reliableChannel, clients);
     }
 
@@ -370,23 +378,27 @@ public class Server : MonoBehaviour
     {
         string[] coord = posXY.Split('%');
         players[cnnId].avatar.GetComponent<Guardian>().Spell3Activation(new Vector3(int.Parse(coord[0].Split('.')[0]), 0, int.Parse(coord[1].Split('.')[0])));
+        Refresh();
         //Send("SPELL3|" + cnnId + "|" + posXY, reliableChannel, clients);
     }
     public void Spell4(int cnnId, string posXY)
     {
         string[] coord = posXY.Split('%');
         players[cnnId].avatar.GetComponent<Guardian>().Spell4Activation(new Vector3(int.Parse(coord[0].Split('.')[0]), 0, int.Parse(coord[1].Split('.')[0])));
+        Refresh();
         //Send("SPELL4|" + cnnId + "|" + posXY, reliableChannel, clients);
     }
 
     public void Moove(Vector3 hitPoint)
     {
         Send("MOOVE|" + hostId + "|" + hitPoint.x + "%" + hitPoint.z, reliableChannel, clients);
+        Refresh();
     }
 
     public void Spell(Vector3 hitPoint, int NumSpell)
     {
         Send("SPELL" + NumSpell + "|" + hostId + "|" + hitPoint.x + "%" + hitPoint.z, reliableChannel, clients);
+        Refresh();
     }
 
     public void Refresh()

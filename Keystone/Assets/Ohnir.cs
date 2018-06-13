@@ -151,7 +151,7 @@ public class Ohnir : Guardian
         Spell1ForEndurance = 300;
         Spell2ForEndurance = 100;
         Spell3ForEndurance = 100;
-        Spell4ForEndurance = 1000;
+        Spell4ForEndurance = 00;
 
         AbleToMoove = true;
     }
