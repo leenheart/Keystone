@@ -158,6 +158,19 @@ public class Manager : MonoBehaviour
             {
                 Spell4();
             }
+            else if (Input.GetButtonDown("Fire2"))
+            {
+                Selection = "";
+                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
+                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
+                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
+                Spell1Button.color = Color.white;
+                Spell2Button.color = Color.white;
+                Spell3Button.color = Color.white;
+                Spell4Button.color = Color.white;
+                MooveButton.color = Color.white;
+            }
 
 
 
