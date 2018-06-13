@@ -21,7 +21,7 @@ public class Server : MonoBehaviour
     private float nextUpdate = 0;
 
     private const int MAW_CONNECTION = 100;
-    private int port = 3778;
+    private int port = 7777;
 
     private int DefenderId;
     private int hostId;
@@ -63,7 +63,6 @@ public class Server : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(hostId);
 
         if (!isStarted) return;
 

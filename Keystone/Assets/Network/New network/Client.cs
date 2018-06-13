@@ -55,7 +55,7 @@ public class Client : MonoBehaviour
         HostTopology topo = new HostTopology(cc, MAW_CONNECTION);
 
         hostId = NetworkTransport.AddHost(topo, 0);
-        connectionId = NetworkTransport.Connect(hostId, "127.0.0.1", port, 0, out error);
+        connectionId = NetworkTransport.Connect(hostId, "25.48.15.239", port, 0, out error);
 
         connectionTime = Time.time;
         isConnected = true;
