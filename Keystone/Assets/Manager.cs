@@ -103,7 +103,7 @@ public class Manager : MonoBehaviour
             Spell4Button.color = Color.white;
             MooveButton.color = Color.white;
 
-            if(PlayeurNow.name == "Ohnir")
+            if(PlayeurNow.name == "Ohnir(Clone)")
             {
                 PlayeurNow.GetComponent<Guardian>().Armor += 1;
             }
@@ -111,8 +111,10 @@ public class Manager : MonoBehaviour
             turn++;
 
                 PlayeurNow.GetComponent<Guardian>().Endurance += 150;
-                if (PlayeurNow.GetComponent<Guardian>().Endurance > PlayeurNow.GetComponent<Guardian>().EnduranceMax) PlayeurNow.GetComponent<Guardian>().Endurance = PlayeurNow.GetComponent<Guardian>().EnduranceMax;
-
+            if (PlayeurNow.GetComponent<Guardian>().Endurance > PlayeurNow.GetComponent<Guardian>().EnduranceMax)
+            {
+                PlayeurNow.GetComponent<Guardian>().Endurance = PlayeurNow.GetComponent<Guardian>().EnduranceMax;
+            }
             endNextTurn = Time.time + turnTime;
 
             if (PlayeurNow == Attacker) // changement du joueur 
@@ -177,20 +179,34 @@ public class Manager : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 //ONLI FOR OHNIR
-                if (Selection == "Spell4")
+                if (PlayeurNow.name == "Ohnir(Clone)")
                 {
-                    Vector3 look = hit.point - PlayeurNow.transform.position;
-                    look.y = 0;
-                    PlayeurNow.GetComponentsInChildren<MeshRenderer>()[2].gameObject.transform.rotation = Quaternion.LookRotation(look);
-                    PlayeurNow.GetComponentsInChildren<MeshRenderer>()[2].gameObject.transform.localScale = new Vector3(3, 0.001f, CalculRange(hit.point, PlayeurNow.transform.position) / 20);
+                    if (Selection == "Spell4")
+                    {
+                        Vector3 look = hit.point - PlayeurNow.transform.position;
+                        look.y = 0;
+                        PlayeurNow.GetComponentsInChildren<MeshRenderer>()[2].gameObject.transform.rotation = Quaternion.LookRotation(look);
+                        PlayeurNow.GetComponentsInChildren<MeshRenderer>()[2].gameObject.transform.localScale = new Vector3(3, 0.001f, CalculRange(hit.point, PlayeurNow.transform.position) / 20);
+                    }
+                    if (Selection == "Spell3")
+                    {
+                        Vector3 look = hit.point - PlayeurNow.transform.position;
+                        look.y = 0;
+                        PlayeurNow.GetComponentsInChildren<MeshRenderer>()[5].gameObject.transform.rotation = Quaternion.LookRotation(look);
+                    }
                 }
-                if (Selection == "Spell3")
+                else if (PlayeurNow.name == "Guemnaar(Clone)")
                 {
-                    Vector3 look = hit.point - PlayeurNow.transform.position;
-                    look.y = 0;
-                    PlayeurNow.GetComponentsInChildren<MeshRenderer>()[5].gameObject.transform.rotation = Quaternion.LookRotation(look);
+                    if(PlayeurNow.GetComponent<Guardian>().Hp <= PlayeurNow.GetComponent<Guardian>().HpMax / 2)
+                    {
+                        //fix me 
+                        //set dommage a *2
+                        //FIXME
+                    }
                 }
-                else if (Selection == "Moove")
+
+
+                 if (Selection == "Moove")
                 {
                     int dist = (int)CalculRange(hit.point, PlayeurNow.transform.position) / 2;
                     if (dist * 10 <= PlayeurNow.GetComponent<Guardian>().Endurance / 20 -1)

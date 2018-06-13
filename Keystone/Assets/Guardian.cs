@@ -32,6 +32,8 @@ public abstract class Guardian : MonoBehaviour
     public bool IsTakingDommageWhenTouchMe = false;
     public bool IsPuchingWhenTouchMe = false;
 
+    public bool ExploseAtTheEndOfMove = false;
+
     public int DommageTakeWhenTouchMe = 500;
 
     void OnCollisionEnter(Collision collider)
@@ -119,6 +121,36 @@ public abstract class Guardian : MonoBehaviour
             {
                 AbleToDo = true;
                 Mooving = false;
+
+                if (ExploseAtTheEndOfMove)
+                {
+
+                    foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
+                    {
+                        if (g != gameObject)
+                        {
+                            if (Manager.CalculRange(g.transform.position, transform.position) <= 5)
+                            {
+                                g.GetComponent<Guardian>().TakeDammage(300);
+
+                                look = g.transform.position - transform.position / 10;
+                                look.y = 2;
+                                g.GetComponent<Rigidbody>().AddForce(look * 10);
+
+                            }
+                        }
+                    }
+                    foreach (GameObject g in GameObject.FindGameObjectsWithTag("Obstacle"))
+                    {
+                        if (Manager.CalculRange(g.transform.position, transform.position) <= 5)
+                        {
+                            Destroy(g);
+                        }
+
+                    }
+                }
+
+                ExploseAtTheEndOfMove = false;
                 IsTakingDommageWhenTouchMe = false;
                 IsPuchingWhenTouchMe = false;
 

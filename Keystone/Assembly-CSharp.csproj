@@ -58,6 +58,7 @@
      <Compile Include="Assets\Génération map\GenerateurNuage.cs" />
      <Compile Include="Assets\Génération map\Generation.cs" />
      <Compile Include="Assets\Guardian.cs" />
+     <Compile Include="Assets\Guemnaar.cs" />
      <Compile Include="Assets\Keratine Arrow.cs" />
      <Compile Include="Assets\Manager.cs" />
      <Compile Include="Assets\Network\New network\Client.cs" />

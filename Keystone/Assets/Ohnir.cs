@@ -58,7 +58,7 @@ public class Ohnir : Guardian
         {
             if (g != gameObject)
             {
-                if (Manager.CalculRange(g.transform.position, transform.position) <= 10)
+                if (Manager.CalculRange(g.transform.position, transform.position) <= 5)
                 {
                     g.GetComponent<Guardian>().TakeDammage(300);
 
@@ -112,7 +112,6 @@ public class Ohnir : Guardian
     }
     public override void Spell4Activation(Vector3 hitPoint)
     {
-        GetComponent<CapsuleCollider>().enabled = true;
         GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
 
         Vector3 look = hitPoint - transform.position;
