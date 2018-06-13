@@ -18,7 +18,7 @@ public class Client : MonoBehaviour
 {
 
     private const int MAW_CONNECTION = 100;
-    private int port = 7777;
+    private int port = 3778;
 
     private int hostId;
 
