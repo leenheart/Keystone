@@ -815,7 +815,7 @@ public class Generation : MonoBehaviour
                     }
                     if (sommeEntoure > 7)
                     {
-                        random = Random.Range(0, 30);
+                        random = Random.Range(0, 50);
                         randomArbre = Random.Range(0, 50);
 
                         if (random == 1)

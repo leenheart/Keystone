@@ -8,8 +8,6 @@ public class Ohnir : Guardian
 
     public GameObject Arrow;
 
-    Quaternion pos;
-
     public override bool Spell1Selection()
     {
         if (Endurance >= 100)
@@ -20,7 +18,6 @@ public class Ohnir : Guardian
         }
         return false;
     }
-
     public override bool Spell2Selection()
     {
         if (Endurance >= 200)
@@ -35,6 +32,7 @@ public class Ohnir : Guardian
         if (Endurance >= 200)
         {
             GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[6].enabled = true;
             return true;
         }
         return false;
@@ -54,20 +52,45 @@ public class Ohnir : Guardian
 
     public override void Spell1Activation(Vector3 hitPoint)
     {
-        GetComponentsInChildren<MeshCollider>()[0].enabled = true;
         GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
+
+        foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            if (g != gameObject)
+            {
+                if (Manager.CalculRange(g.transform.position, transform.position) <= 10)
+                {
+                    g.GetComponent<Guardian>().TakeDammage(300);
+
+                    Vector3 look = g.transform.position - transform.position / 10;
+                    look.y = 2;
+                    g.GetComponent<Rigidbody>().AddForce(look * 10);
+
+                }
+            }
+        }
+        foreach (GameObject g in GameObject.FindGameObjectsWithTag("Obstacle"))
+        {
+            if (Manager.CalculRange(g.transform.position, transform.position) <= 5)
+            {
+                Destroy(g);
+            }
+
+        }
+
+
         Endurance -= Spell1ForEndurance;
     }
     public override void Spell2Activation(Vector3 hitPoint)
     {
         if (AbleToMoove)
         {
-            Armor += 60 * Armor / 100;
+            Armor += 20;
             AbleToMoove = false;
         }
         else
         {
-            Armor -= 60 * Armor / 100;
+            Armor -= 20;
             AbleToMoove = true;
         }
         Endurance -= Spell2ForEndurance;
@@ -84,42 +107,27 @@ public class Ohnir : Guardian
         arrowNow.GetComponent<Rigidbody>().AddForce(transform.forward * 100 * Time.deltaTime);
         Endurance -= Spell3ForEndurance;
 
-    }
+        GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
 
-    void OnCollisionEnter(Collision collider)
-    {
-        if (collider.gameObject.name == "Arrow(Clone)")
-        {
-            Debug.Log("ARROW TUCH :" + collider.gameObject.name);
-            Destroy(collider.gameObject);
-            TakeDammage(250);
-        }
-        if (collider.gameObject.tag == "Player")
-        {
-            HitPoint = transform.position;
-            Debug.Log(collider.gameObject.name + "something append ");
-            collider.gameObject.GetComponent<Guardian>().TakeDammage(250);
-        }
     }
-
     public override void Spell4Activation(Vector3 hitPoint)
     {
-        //if (GameObject.Find("Manager").GetComponent<Manager>().ColliderName != "dec(Clone)" && GameObject.Find("Manager").GetComponent<Manager>().ColliderName != "arbre(Clone)")
-        {
-            //PlayeurNow.transform.position = hit.point + Vector3.up;
-            GetComponent<CapsuleCollider>().enabled = true;
-            GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
-            Vector3 look = hitPoint - transform.position;
-            look.y = 0;
-            transform.rotation = Quaternion.LookRotation(look);
-            // if (GameObject.Find("Server"))
-            {
-                MoovingSpeed = 10;
-                Mooving = true;
-                HitPoint = hitPoint;
-                AbleToDo = false;
-            }
-        }
+        GetComponent<CapsuleCollider>().enabled = true;
+        GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
+
+        Vector3 look = hitPoint - transform.position;
+        look.y = 0;
+        transform.rotation = Quaternion.LookRotation(look);
+
+        MoovingSpeed = 10;
+        Mooving = true;
+        HitPoint = hitPoint;
+        AbleToDo = false;
+
+        IsTakingDommageWhenTouchMe = true;
+        DommageTakeWhenTouchMe = 600;
+        IsPuchingWhenTouchMe = true;
+
         Endurance -= Spell4ForEndurance;
 
     }
@@ -127,19 +135,24 @@ public class Ohnir : Guardian
     // Use this for initialization
     void Start()
     {
-        pos = transform.rotation;
         DontDestroyOnLoad(gameObject);
+
         HpMax = 1000;
         Hp = 1000;
-        Endurance = 1000;
+
+        Endurance = 500;
         EnduranceMax = 1000;
+
         Armor = 10;
-        MooveRangeForEndurance = 100;
+
+        MooveRangeForEndurance = 50;
         OneMoove = 2;
-        Spell1ForEndurance = 100;
-        Spell2ForEndurance = 200;
-        Spell3ForEndurance = 200;
-        Spell4ForEndurance = 700;
+
+        Spell1ForEndurance = 300;
+        Spell2ForEndurance = 100;
+        Spell3ForEndurance = 100;
+        Spell4ForEndurance = 1000;
+
         AbleToMoove = true;
     }
 }

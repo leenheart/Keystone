@@ -25,7 +25,6 @@ public class Server : MonoBehaviour
 
     private int DefenderId;
     private int hostId;
-    private int webHostId;
 
     private int reliableChannel;
     private int unreliableChannel;
@@ -52,7 +51,6 @@ public class Server : MonoBehaviour
         HostTopology topo = new HostTopology(cc, MAW_CONNECTION);
 
         hostId = NetworkTransport.AddHost(topo, port, null);
-        webHostId = NetworkTransport.AddWebsocketHost(topo, port, null);
 
         isStarted = true;
         //Debug.Log(isStarted);
@@ -159,9 +157,10 @@ public class Server : MonoBehaviour
                                 dic.Value.avatar.GetComponent<Rigidbody>().isKinematic = false;
                             }
                             Send("Start|", reliableChannel, clients);
-                            PassTurn();
+                            //PassTurn(GameObject.Find("Manager").GetComponent<Manager>().EstEntraindejouer());
                         }
                         DefenderId = connectionId;
+                        
                         break;
 
                     case "ASKGENERATEMAP":
@@ -300,11 +299,20 @@ public class Server : MonoBehaviour
         {
             //Do Some staff to spawn
             go.transform.position = new Vector3(48, 3, 25);
+            go.transform.rotation = Quaternion.Euler(0, -90, 0);
+
+            go.GetComponentsInChildren<SpriteRenderer>()[0].enabled = false;
+            go.GetComponentsInChildren<SpriteRenderer>()[1].enabled = true;
+
             p.DefOrAtt = "Def";
             isStarted = true;
         }
         else
         {
+            go.GetComponentsInChildren<SpriteRenderer>()[0].enabled = true;
+            go.GetComponentsInChildren<SpriteRenderer>()[1].enabled = false;
+            go.transform.rotation = Quaternion.Euler(0, 90, 0);
+
             p.DefOrAtt = "Att";
         }
         players.Add(cnnId, p);
@@ -325,14 +333,15 @@ public class Server : MonoBehaviour
             {
                 dic.Value.avatar.GetComponent<Rigidbody>().isKinematic = false;
             }
-            PassTurn();
+           // PassTurn(GameObject.Find("Manager").GetComponent<Manager>().EstEntraindejouer());
         }
+
     }
 
-    public void PassTurn()
+    public void PassTurn(string who)
     {
         GameObject.Find("Manager").GetComponent<Manager>().endNextTurn = Time.time;
-        Send("PASSTURN|", reliableChannel, clients);
+        Send("PASSTURN|" + who, reliableChannel, clients);
     }
 
     public void Moove(int cnnId, string posXY)

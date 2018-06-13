@@ -21,7 +21,6 @@ public class Client : MonoBehaviour
     private int port = 7777;
 
     private int hostId;
-    private int webHostId;
 
     private int reliableChannel;
     private int unreliableChannel;
@@ -151,6 +150,14 @@ public class Client : MonoBehaviour
 
                     case "PASSTURN":
                         GameObject.Find("Manager").GetComponent<Manager>().endNextTurn = Time.time;
+                        if(splitData[1] == "Attacker")
+                        {
+                            GameObject.Find("Manager").GetComponent<Manager>().PlayeurNow = GameObject.Find("Manager").GetComponent<Manager>().Attacker;
+                        }
+                        else
+                        {
+                            GameObject.Find("Manager").GetComponent<Manager>().PlayeurNow = GameObject.Find("Manager").GetComponent<Manager>().Defender;
+                        }
                         break;
 
                     case "ASKNAME":
@@ -232,12 +239,19 @@ public class Client : MonoBehaviour
         // Is this ours ?
         if (cnnId == ourClientId)
         {
+            go.transform.rotation = Quaternion.Euler(0, 90, 0);
             //Do Some staff to spawn
+            go.GetComponentsInChildren<SpriteRenderer>()[0].enabled = true;
+            go.GetComponentsInChildren<SpriteRenderer>()[1].enabled = false;
+
             isStarted = true;
             p.DefOrAtt = "Att";
         }
         else
         {
+            go.transform.rotation = Quaternion.Euler(0, -90, 0);
+            go.GetComponentsInChildren<SpriteRenderer>()[0].enabled = false;
+            go.GetComponentsInChildren<SpriteRenderer>()[1].enabled = true;
             p.DefOrAtt = "Def";
             go.transform.position = new Vector3(48, 3, 25);
         }

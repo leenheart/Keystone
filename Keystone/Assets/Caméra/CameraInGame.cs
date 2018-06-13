@@ -34,7 +34,7 @@ public class CameraInGame : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             foreach (GameObject g in GameObject.FindGameObjectsWithTag("pont")) Destroy(g);
             foreach (GameObject g in GameObject.FindGameObjectsWithTag("Obstacle")) Destroy(g);

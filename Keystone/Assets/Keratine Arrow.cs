@@ -4,5 +4,17 @@ using UnityEngine;
 
 public class KeratineArrow : MonoBehaviour
 {
+    public int dommage = 150;
 
+    void OnCollisionEnter(Collision collider)
+    {
+        if (collider.gameObject.tag == "Player")
+        {
+            collider.gameObject.GetComponent<Guardian>().TakeDammage(dommage);
+        }
+        else
+        {
+            Destroy(this);
+        }
+    }
 }

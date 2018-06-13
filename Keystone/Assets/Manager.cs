@@ -29,14 +29,14 @@ public class Manager : MonoBehaviour
 
     public GameObject PlayerAvatar;
 
-    public Image textPlayerTurn;
+    //public Image textPlayerTurn;
 
     public Text textTimeToPlay;
 
     public Image Mana;
     public Image Vie;
 
-    GameObject PlayeurNow;
+    public GameObject PlayeurNow;
 
     public float turnTime;
     public string Selection;
@@ -60,7 +60,8 @@ public class Manager : MonoBehaviour
         Spell3Button = GameObject.Find("Spell 3").GetComponent<Image>();
         Spell4Button = GameObject.Find("Spell 4").GetComponent<Image>();
 
-        textPlayerTurn = GameObject.Find("TurnPlayeur").GetComponent<Image>();
+        //textPlayerTurn = GameObject.Find("TurnPlayeur").GetComponent<Image>();
+
         textTimeToPlay = GameObject.Find("Timer").GetComponent<Text>();
         Mana = GameObject.Find("Mana Bar").GetComponent<Image>();
         Vie = GameObject.Find("HP bar").GetComponent<Image>();
@@ -77,7 +78,7 @@ public class Manager : MonoBehaviour
             }
             else
             {
-                GameObject.Find("Server").GetComponent<Server>().PassTurn();
+                GameObject.Find("Server").GetComponent<Server>().PassTurn(GameObject.Find("Manager").GetComponent<Manager>().EstEntraindejouer());
             }
         }
     }
@@ -91,49 +92,43 @@ public class Manager : MonoBehaviour
         textTimeToPlay.text = ((int)DiffTimeTurn).ToString();
         if (Time.time >= endNextTurn) //passage au tour suivant
         {
+            Selection = "";
+            PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+            PlayeurNow.GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
+            PlayeurNow.GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
+            PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
+            Spell1Button.color = Color.white;
+            Spell2Button.color = Color.white;
+            Spell3Button.color = Color.white;
+            Spell4Button.color = Color.white;
+            MooveButton.color = Color.white;
+
+            if(PlayeurNow.name == "Ohnir")
+            {
+                PlayeurNow.GetComponent<Guardian>().Armor += 1;
+            }
 
             turn++;
 
-            foreach (GameObject ohnir in GameObject.FindGameObjectsWithTag("Player"))
-            {
-                ohnir.GetComponent<Ohnir>().Endurance += 60 * ohnir.GetComponent<Ohnir>().EnduranceMax / 100;
-                if (ohnir.GetComponent<Ohnir>().Endurance > ohnir.GetComponent<Ohnir>().EnduranceMax) ohnir.GetComponent<Ohnir>().Endurance = ohnir.GetComponent<Ohnir>().EnduranceMax;
-            }
+                PlayeurNow.GetComponent<Guardian>().Endurance += 150;
+                if (PlayeurNow.GetComponent<Guardian>().Endurance > PlayeurNow.GetComponent<Guardian>().EnduranceMax) PlayeurNow.GetComponent<Guardian>().Endurance = PlayeurNow.GetComponent<Guardian>().EnduranceMax;
 
             endNextTurn = Time.time + turnTime;
 
             if (PlayeurNow == Attacker) // changement du joueur 
             {
-                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
-                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
-                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
-                PlayeurNow.GetComponentsInChildren<MeshCollider>()[0].enabled = false;
-                Spell1Button.color = Color.white;
-                Spell2Button.color = Color.white;
-                Spell3Button.color = Color.white;
-                Spell4Button.color = Color.white;
-                MooveButton.color = Color.white;
-                textPlayerTurn.sprite = Def;
-                Vector3 vect = GameObject.Find("TurnPlayeur").transform.position;
-                vect.x += 600;
-                GameObject.Find("TurnPlayeur").transform.position = vect;
+
+                GameObject.Find("TurnPlayeurDef").GetComponent<Image>().enabled = true;
+                GameObject.Find("TurnPlayeurAtt").GetComponent<Image>().enabled = false;
+
                 PlayeurNow = Defender;
             }
             else
             {
-                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
-                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
-                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
-                PlayeurNow.GetComponentsInChildren<MeshCollider>()[0].enabled = false;
-                Spell1Button.color = Color.white;
-                Spell2Button.color = Color.white;
-                Spell3Button.color = Color.white;
-                Spell4Button.color = Color.white;
-                MooveButton.color = Color.white;
-                textPlayerTurn.sprite = Att;
-                Vector3 vect = GameObject.Find("TurnPlayeur").transform.position;
-                vect.x -= 600;
-                GameObject.Find("TurnPlayeur").transform.position = vect;
+
+                GameObject.Find("TurnPlayeurDef").GetComponent<Image>().enabled = false;
+                GameObject.Find("TurnPlayeurAtt").GetComponent<Image>().enabled = true;
+
                 PlayeurNow = Attacker;
             }
         }
@@ -147,6 +142,25 @@ public class Manager : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                Spell1();
+            }
+            else if (Input.GetKeyDown(KeyCode.Z))
+            {
+                Spell2();
+            }
+            else if (Input.GetKeyDown(KeyCode.E))
+            {
+                Spell3();
+            }
+            else if (Input.GetKeyDown(KeyCode.R))
+            {
+                Spell4();
+            }
+
+
+
             if (Physics.Raycast(ray, out hit))
             {
                 //ONLI FOR OHNIR
@@ -157,10 +171,16 @@ public class Manager : MonoBehaviour
                     PlayeurNow.GetComponentsInChildren<MeshRenderer>()[2].gameObject.transform.rotation = Quaternion.LookRotation(look);
                     PlayeurNow.GetComponentsInChildren<MeshRenderer>()[2].gameObject.transform.localScale = new Vector3(3, 0.001f, CalculRange(hit.point, PlayeurNow.transform.position) / 20);
                 }
+                if (Selection == "Spell3")
+                {
+                    Vector3 look = hit.point - PlayeurNow.transform.position;
+                    look.y = 0;
+                    PlayeurNow.GetComponentsInChildren<MeshRenderer>()[5].gameObject.transform.rotation = Quaternion.LookRotation(look);
+                }
                 else if (Selection == "Moove")
                 {
                     int dist = (int)CalculRange(hit.point, PlayeurNow.transform.position) / 2;
-                    if (dist * 10 <= PlayeurNow.GetComponent<Guardian>().OneMoove * PlayeurNow.GetComponent<Guardian>().Endurance)
+                    if (dist * 10 <= PlayeurNow.GetComponent<Guardian>().Endurance / 20 -1)
                         PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].gameObject.transform.localScale = new Vector3(dist * 10, 0.001f, dist * 10);
                 }
 
@@ -228,7 +248,7 @@ public class Manager : MonoBehaviour
                     {
                         //Debug.Log((hit.collider.name != "dec(Clone)") + " " + (hit.collider.name != "arbre(Clone)") + " " + PlayeurNow.GetComponent<Guardian>().AbleToMoove + " " + (CalculRange(transform.position, hit.point) <= PlayeurNow.GetComponent<Guardian>().OneMoove));
                         //Debug.Log(CalculRange(transform.position, hit.point)+ " <= " + PlayeurNow.GetComponent<Guardian>().OneMoove);
-                        if (hit.collider.name != "dec(Clone)" && hit.collider.name != "arbre(Clone)" && PlayeurNow.GetComponent<Guardian>().AbleToMoove && CalculRange(PlayeurNow.transform.position, hit.point) <= PlayeurNow.GetComponent<Guardian>().OneMoove)
+                        if (hit.collider.name != "dec(Clone)" && hit.collider.name != "arbre(Clone)" && PlayeurNow.GetComponent<Guardian>().AbleToMoove && CalculRange(PlayeurNow.transform.position, hit.point) <= PlayeurNow.GetComponent<Guardian>().Endurance /100)
                         {
                             PlayeurNow.GetComponent<Guardian>().Moove(hit.point);
                             if (GameObject.Find("Client"))
@@ -240,6 +260,10 @@ public class Manager : MonoBehaviour
                                 GameObject.Find("Server").GetComponent<Server>().Moove(hit.point);
                             }
                         }
+                        PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+                        PlayeurNow.GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
+                        PlayeurNow.GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
+                        PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
                         MooveButton.color = Color.white;
                         Selection = "";
                     }
@@ -251,7 +275,7 @@ public class Manager : MonoBehaviour
 
     public static float CalculRange(Vector3 pos1, Vector3 pos2)
     {
-        return Mathf.Sqrt(Mathf.Pow(pos1.x - pos2.x, 2) + Mathf.Pow(pos1.y - pos2.y, 2));
+        return Mathf.Sqrt(Mathf.Pow(pos1.x - pos2.x, 2) + Mathf.Pow(pos1.z - pos2.z, 2));
     }
 
     public void Moove()
@@ -296,5 +320,14 @@ public class Manager : MonoBehaviour
             Spell4Button.color = Color.green;
         }
 
+    }
+
+    public string EstEntraindejouer()
+    {
+        if (PlayeurNow == Attacker)
+        {
+            return ("Attacker");
+        }
+        else return "Defender";
     }
 }
