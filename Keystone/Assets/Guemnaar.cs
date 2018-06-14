@@ -5,12 +5,16 @@ using UnityEngine;
 public class Guemnaar : Guardian
 {
 
+    public GameObject demon;
+
     public override bool Spell1Selection()
     {
         if (Endurance >= 100)
         {
             GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
-            GetComponentsInChildren<MeshRenderer>()[2].enabled = true;
+            GetComponentsInChildren<MeshRenderer>()[2].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[3].enabled = true;
             return true;
         }
         return false;
@@ -25,8 +29,10 @@ public class Guemnaar : Guardian
     {
         if (Endurance >= 100)
         {
-            //GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
-            // GetComponentsInChildren<MeshRenderer>()[4].enabled = true;
+            GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[2].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[4].enabled = true;
             return true;
         }
         return false;
@@ -36,8 +42,10 @@ public class Guemnaar : Guardian
     {
         if (Endurance >= 100)
         {
-            //GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
-            // GetComponentsInChildren<MeshRenderer>()[4].enabled = true;
+            GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[2].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
             return true;
         }
         return false;
@@ -51,12 +59,10 @@ public class Guemnaar : Guardian
         {
             if (g != gameObject)
             {
-                Vector2 posAdv = g.transform.position;
-                Vector2 posMe = transform.position;
 
                 if (Manager.CalculRange(g.transform.position, transform.position) <= 5) //si je suis dans un rectangle !
                 {
-                    g.GetComponent<Guardian>().TakeDammage(300);
+                    g.GetComponent<Guardian>().TakeDammage(GetDommage(300));
                 }
             }
         }
@@ -88,15 +94,39 @@ public class Guemnaar : Guardian
         HitPoint = hitPoint;
         AbleToDo = false;
         ExploseAtTheEndOfMove = true;
+        DommageExplosion = GetDommage(300);
 
         Endurance -= Spell3ForEndurance;
 
     }
     public override void Spell4Activation(Vector3 hitPoint)
     {
-
+        if (!GameObject.Find("Demon"))
+        {
+            GameObject g = Instantiate(demon, transform);
+            if (GameObject.Find("Server"))
+            {
+                g.GetComponentsInChildren<SpriteRenderer>()[0].enabled = false;
+                g.GetComponentsInChildren<SpriteRenderer>()[1].enabled = true;
+            }
+            else
+            {
+                g.GetComponentsInChildren<SpriteRenderer>()[0].enabled = true;
+                g.GetComponentsInChildren<SpriteRenderer>()[1].enabled = false;
+            }
+        }
+        Endurance -= Spell4ForEndurance;
     }
 
+
+    public int GetDommage(int dommage)
+    {
+        if (Hp <= HpMax / 2)
+        {
+            return dommage * 2;
+        }
+        return dommage;
+    }
 
     // Use this for initialization
     void Start()

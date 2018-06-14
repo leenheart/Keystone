@@ -55,6 +55,7 @@
      <Compile Include="Assets\Audio.cs" />
      <Compile Include="Assets\BlowOfHorn.cs" />
      <Compile Include="Assets\Caméra\CameraInGame.cs" />
+     <Compile Include="Assets\Demon.cs" />
      <Compile Include="Assets\Génération map\GenerateurNuage.cs" />
      <Compile Include="Assets\Génération map\Generation.cs" />
      <Compile Include="Assets\Guardian.cs" />

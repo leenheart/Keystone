@@ -1,23 +1,37 @@
 fileFormatVersion: 2
-guid: 51e714ffcdc5b0c42800c86bc983a63c
-timeCreated: 1528922541
+guid: 3ff1000cb90392a4b9399d6406e8d86f
+timeCreated: 1528964173
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: default
-    100002: //RootNode
-    400000: default
-    400002: //RootNode
-    2300000: default
-    3300000: default
-    4300000: default
+    100000: Cylinder
+    100002: Icosphere
+    100004: //RootNode
+    400000: Cylinder
+    400002: Icosphere
+    400004: //RootNode
+    2300000: Cylinder
+    2300002: Icosphere
+    2300004: //RootNode
+    3300000: Cylinder
+    3300002: Icosphere
+    3300004: //RootNode
+    4300000: Icosphere
+    4300002: Cylinder
+    7400000: Default Take
+    9500000: //RootNode
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: defaultMat
-    second: {fileID: 2100000, guid: 478622c07c0563b448b8d6d142ffc4fd, type: 2}
+      name: Material_001
+    second: {fileID: 2100000, guid: 32d8a5e99877a224c8620bb032b1e233, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_002
+    second: {fileID: 2100000, guid: 0e1cc64b73c2d4347a1cf3f751ccbdd6, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -89,7 +103,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

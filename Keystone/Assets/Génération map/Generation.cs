@@ -765,7 +765,7 @@ public class Generation : MonoBehaviour
                     {
                         for (int yy = y; yy < sizeMapY; yy++)
                         {
-                            if (map[x - 1, yy] == 1)
+                            if (x == 0 || map[x - 1, yy] == 1)
                             {
                                 DontDestroyOnLoad(Instantiate(Resources.Load("Pont 2"), new Vector3(x - 1, 0, y - 1), new Quaternion()));
                                 for (int yyy = y; yyy < yy + 2; yyy++)
@@ -820,11 +820,19 @@ public class Generation : MonoBehaviour
 
                         if (random == 1)
                         {
-                            DontDestroyOnLoad(Instantiate(Resources.Load("dec"), new Vector3(x, 0.25f, y), Quaternion.identity));
+                            GameObject g = (GameObject) Instantiate(Resources.Load("Kayou"), new Vector3(x, 0.25f, y), Quaternion.Euler(0, Random.Range(-180, 180), 0));
+                            g.transform.localScale = new Vector3(Random.Range(0.5f, 0.8f), Random.Range(0.5f, 0.8f), Random.Range(0.5f, 0.8f));
+                            DontDestroyOnLoad(g);
+                            g.tag = "Obstacle";
+                            g.layer = 9;
                         }
                         else if (randomArbre == 1)
                         {
-                            DontDestroyOnLoad(Instantiate(Resources.Load("tree"), new Vector3(x, 2, y), new Quaternion()));
+                            GameObject g = (GameObject) Instantiate(Resources.Load("TREE"), new Vector3(x, 1, y), Quaternion.Euler(-90,Random.Range(-180,180),0));
+                            g.transform.localScale = new Vector3(Random.Range(0.8f, 1.1f), Random.Range(0.8f, 1.1f), Random.Range(0.8f, 1.1f));
+                            DontDestroyOnLoad(g);
+                            g.tag = "Obstacle";
+                            g.layer = 9;
                         }
                     }
                 }

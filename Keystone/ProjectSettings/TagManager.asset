@@ -19,6 +19,7 @@ TagManager:
   - Doovmar spell2
   - Doovmar spell3
   - pont
+  - Obstacle
   layers:
   - Default
   - TransparentFX
@@ -28,8 +29,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - Map
+  - Obstacle
   - 
   - 
   - 

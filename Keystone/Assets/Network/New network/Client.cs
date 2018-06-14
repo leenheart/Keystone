@@ -18,14 +18,14 @@ public class Client : MonoBehaviour
 {
 
     private const int MAW_CONNECTION = 100;
-    private int port = 3778;
+    private int port = 7777;
 
     private int hostId;
 
     private int reliableChannel;
     private int unreliableChannel;
 
-    private int ourClientId;
+    public int ourClientId;
     private int connectionId;
 
     private float connectionTime;
@@ -34,9 +34,15 @@ public class Client : MonoBehaviour
     private bool GameLunch = false;
     private byte error;
 
+    public string Ip = "127.0.0.1";
+
     private string playerName;
 
-    public GameObject playerPrefab;
+    public GameObject playerOhnir;
+    public GameObject playerGuemnaar;
+
+    public GameObject me;
+
     public Dictionary<int, Player> players = new Dictionary<int, Player>();
 
     public void Connect()
@@ -55,7 +61,7 @@ public class Client : MonoBehaviour
         HostTopology topo = new HostTopology(cc, MAW_CONNECTION);
 
         hostId = NetworkTransport.AddHost(topo, 0);
-        connectionId = NetworkTransport.Connect(hostId, "25.49.49.53" /*"25.48.15.239"*/, port, 0, out error);
+        connectionId = NetworkTransport.Connect(hostId, Ip /*"25.49.49.53" /*"25.48.15.239"*/, port, 0, out error);
 
         connectionTime = Time.time;
         isConnected = true;
@@ -64,13 +70,13 @@ public class Client : MonoBehaviour
 
     private void Update()
     {
+        if (GameObject.Find("Attt")) GameObject.Find("Attt").GetComponent<Image>().enabled = true;
+
         if (!isConnected) return;
         //Debug.Log("Try to connect !");
 
         if (!GameLunch && players.Count >= 2)
         {
-            GameObject.Find("LockAndStart").GetComponent<Image>().enabled = true;
-            GameObject.Find("LockAndStart").GetComponent<Button>().enabled = true;
             GameLunch = true;
         }
         if (GameLunch && players.Count < 2)
@@ -97,6 +103,9 @@ public class Client : MonoBehaviour
         {
             case NetworkEventType.ConnectEvent:
                 print("connectionRecieved");
+                GameObject.Find("Defff").GetComponent<Image>().enabled = true;
+                GameObject.Find("LockAndStart").GetComponent<Image>().enabled = true;
+                GameObject.Find("LockAndStart").GetComponent<Button>().enabled = true;
                 break;
 
             case NetworkEventType.DisconnectEvent:
@@ -173,6 +182,7 @@ public class Client : MonoBehaviour
                         GameObject.Find("Manager").GetComponent<Manager>().Defender = players[hostId].avatar;
                         GameObject.Find("Manager").GetComponent<Manager>().Attacker = players[this.connectionId].avatar;
                         GameObject.Find("Manager").GetComponent<Manager>().PlayerAvatar = players[this.connectionId].avatar;
+                        GameObject.Find("Att").GetComponent<Image>().enabled = true;
 
                         foreach (KeyValuePair<int, Player> dic in players)
                         {
@@ -191,15 +201,27 @@ public class Client : MonoBehaviour
 
                     case "Obstacle":
                         ///Debug.Log(splitData[1] + splitData[2] + splitData[3] + splitData[4]);
-                        DontDestroyOnLoad(Instantiate(Resources.Load(splitData[1]), new Vector3(float.Parse(splitData[2]), float.Parse(splitData[3]), float.Parse(splitData[4])), new Quaternion()));
+                        GameObject g = (GameObject) Instantiate(Resources.Load(splitData[1]), new Vector3(float.Parse(splitData[2]), float.Parse(splitData[3]), float.Parse(splitData[4])), Quaternion.Euler(float.Parse(splitData[5])-90, float.Parse(splitData[6]), float.Parse(splitData[7])));
+                        DontDestroyOnLoad(g);
+                        g.transform.localScale = new Vector3(float.Parse(splitData[8]), float.Parse(splitData[9]), float.Parse(splitData[10]));
+                        g.tag = "Obstacle";
+                        g.layer = 9;
                         break;
 
                     case "CNN":
-                        SpawnPlayer(splitData[1], int.Parse(splitData[2]));
+                        if (playerGuemnaar.name == splitData[1])
+                        SpawnPlayer(playerGuemnaar, int.Parse(splitData[2]));
+                        else if (playerOhnir.name == splitData[1])
+                            SpawnPlayer(playerOhnir, int.Parse(splitData[2]));
                         break;
 
                     case "DC":
                         PlayerDisconnected(int.Parse(splitData[1]));
+                        break;
+
+                    case "Select":
+                        GameObject.Find(splitData[1]).GetComponent<Image>().enabled = true;
+                        GameObject.Find(splitData[2]).GetComponent<Image>().enabled = false;
                         break;
 
                     default:
@@ -219,25 +241,19 @@ public class Client : MonoBehaviour
     {
         // Set this clients ID
         ourClientId = int.Parse(data[1]);
-
-        //Send our name to the server
-        Send("NAMEIS|" + playerName, reliableChannel);
-
-        //Create all t he other players
-        for (int i = 2; i < data.Length - 1; i++)
-        {
-            string[] d = data[i].Split('%');
-            SpawnPlayer(d[0], int.Parse(d[1]));
-        }
     }
 
-    private void SpawnPlayer(string playerName, int cnnId)
+    public void SendMe()
     {
-        GameObject go = Instantiate(playerPrefab, new Vector3(2, 3, 25), new Quaternion());
+        Send("Spawn|" + me.name + '|' + ourClientId, reliableChannel);
+    }
+
+    public void SpawnPlayer(GameObject PlayerGameObject, int cnnId)
+    {
+        GameObject go = Instantiate(PlayerGameObject, new Vector3(2, 3, 25), new Quaternion());
 
         Player p = new Player();
         p.avatar = go;
-        p.playerName = playerName;
         p.connectionId = cnnId;
 
         // Is this ours ?
@@ -276,8 +292,6 @@ public class Client : MonoBehaviour
         // Debug.Log("Sending : " + message);
         byte[] msg = Encoding.Unicode.GetBytes(message);
         NetworkTransport.Send(hostId, connectionId, channelId, msg, message.Length * sizeof(char), out error);
-
-
     }
 
     public void GenerateMap()
@@ -304,4 +318,10 @@ public class Client : MonoBehaviour
     {
         Send("SPELL" + NumSpell + "|" + hitPoint.x + "%" + hitPoint.z, reliableChannel);
     }
+
+    public void SendMeSelect(string s, string f)
+    {
+        Send("Select|" + s + "|" + f, reliableChannel);
+    }
+
 }

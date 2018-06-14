@@ -12,6 +12,7 @@ public class KeratineArrow : MonoBehaviour
         {
             Destroy(this);
             Destroy(gameObject);
+            Debug.Log("mais wtf keratine arrow !");
             //collider.gameObject.GetComponent<Guardian>().TakeDammage(dommage);
             Destroy(this);
             Destroy(gameObject);

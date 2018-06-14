@@ -24,6 +24,9 @@ public abstract class Guardian : MonoBehaviour
     public bool AbleToDo = true;
     public bool Mooving = false;
 
+    public GameObject ExplosionArbre;
+    public GameObject ExplosionRocher;
+
     public RectTransform HealthBar;
 
     public Vector3 HitPoint;
@@ -33,6 +36,7 @@ public abstract class Guardian : MonoBehaviour
     public bool IsPuchingWhenTouchMe = false;
 
     public bool ExploseAtTheEndOfMove = false;
+    public int DommageExplosion = 300;
 
     public int DommageTakeWhenTouchMe = 500;
 
@@ -56,6 +60,14 @@ public abstract class Guardian : MonoBehaviour
             }
             if (collider.gameObject.tag == "Obstacle")
             {
+                if (collider.gameObject.name == ("TREE(Clone)"))
+                {
+                    Destroy(Instantiate(ExplosionArbre, collider.gameObject.transform.position + new Vector3(0,1,0), collider.gameObject.transform.rotation), 3);
+                }
+                else
+                {
+                    Destroy(Instantiate(ExplosionRocher, collider.gameObject.transform), 3);
+                }
                 Destroy(collider.gameObject);
             }
 
@@ -131,7 +143,7 @@ public abstract class Guardian : MonoBehaviour
                         {
                             if (Manager.CalculRange(g.transform.position, transform.position) <= 5)
                             {
-                                g.GetComponent<Guardian>().TakeDammage(300);
+                                g.GetComponent<Guardian>().TakeDammage(DommageExplosion);
 
                                 look = g.transform.position - transform.position / 10;
                                 look.y = 2;

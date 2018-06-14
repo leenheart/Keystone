@@ -13,6 +13,10 @@ public class Ohnir : Guardian
         if (Endurance >= 100)
         {
             GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[2].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[5].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
             GetComponentsInChildren<MeshRenderer>()[4].enabled = true;
             return true;
         }
@@ -23,6 +27,11 @@ public class Ohnir : Guardian
         if (Endurance >= 200)
         {
             GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[2].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[5].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
             return true;
         }
         return false;
@@ -32,6 +41,11 @@ public class Ohnir : Guardian
         if (Endurance >= 200)
         {
             GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[2].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[5].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
             GetComponentsInChildren<MeshRenderer>()[6].enabled = true;
             return true;
         }
@@ -42,6 +56,10 @@ public class Ohnir : Guardian
         if (Endurance >= 700)
         {
             GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[2].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[5].enabled = false;
+            GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
             GetComponentsInChildren<MeshRenderer>()[3].enabled = true;
             return true;
         }
@@ -73,7 +91,16 @@ public class Ohnir : Guardian
         {
             if (Manager.CalculRange(g.transform.position, transform.position) <= 5)
             {
+                if(g.name == ("TREE(Clone)"))
+                {
+                    Destroy(Instantiate(ExplosionArbre, g.transform), 3);
+                }
+                else
+                {
+                    Destroy(Instantiate(ExplosionRocher, g.transform), 3);
+                }
                 Destroy(g);
+                
             }
 
         }

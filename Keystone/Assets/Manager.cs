@@ -96,16 +96,40 @@ public class Manager : MonoBehaviour
             PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
             PlayeurNow.GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
             PlayeurNow.GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
-            PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
+            if (PlayeurNow.name == "PlayerOhnir(Clone)")
+            {
+PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
+            }
+            
             Spell1Button.color = Color.white;
             Spell2Button.color = Color.white;
             Spell3Button.color = Color.white;
             Spell4Button.color = Color.white;
             MooveButton.color = Color.white;
 
-            if(PlayeurNow.name == "Ohnir(Clone)")
+            if(PlayeurNow.name == "PlayerOhnir(Clone)")
             {
                 PlayeurNow.GetComponent<Guardian>().Armor += 1;
+            }
+            else if (PlayeurNow.name == "PlayerGuemnaar(Clone)")
+            {
+                PlayeurNow.GetComponent<Guardian>().Hp -= 2;
+                if (GameObject.Find("Demon"))
+                {
+                    PlayeurNow.GetComponent<Guardian>().Hp += 2;
+                    if (PlayeurNow.GetComponent<Guardian>().Hp >= PlayeurNow.GetComponent<Guardian>().HpMax)
+                    {
+                        PlayeurNow.GetComponent<Guardian>().Hp = PlayeurNow.GetComponent<Guardian>().HpMax;
+                    }
+
+                    foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
+                    {
+                        if (g != PlayeurNow)
+                        {
+                                g.GetComponent<Guardian>().TakeDammage(50);
+                        }
+                    }
+                }
             }
 
             turn++;
@@ -179,7 +203,7 @@ public class Manager : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 //ONLI FOR OHNIR
-                if (PlayeurNow.name == "Ohnir(Clone)")
+                if (PlayeurNow.name == "PlayerOhnir(Clone)")
                 {
                     if (Selection == "Spell4")
                     {
@@ -193,15 +217,6 @@ public class Manager : MonoBehaviour
                         Vector3 look = hit.point - PlayeurNow.transform.position;
                         look.y = 0;
                         PlayeurNow.GetComponentsInChildren<MeshRenderer>()[5].gameObject.transform.rotation = Quaternion.LookRotation(look);
-                    }
-                }
-                else if (PlayeurNow.name == "Guemnaar(Clone)")
-                {
-                    if(PlayeurNow.GetComponent<Guardian>().Hp <= PlayeurNow.GetComponent<Guardian>().HpMax / 2)
-                    {
-                        //fix me 
-                        //set dommage a *2
-                        //FIXME
                     }
                 }
 
@@ -312,6 +327,10 @@ public class Manager : MonoBehaviour
         if (PlayerAvatar == PlayeurNow)
         {
             PlayeurNow.GetComponent<Guardian>().MooveSelection();
+            Spell1Button.color = Color.white;
+            Spell2Button.color = Color.white;
+            Spell3Button.color = Color.white;
+            Spell4Button.color = Color.white;
             MooveButton.color = Color.green;
             Selection = "Moove";
         }
@@ -321,6 +340,10 @@ public class Manager : MonoBehaviour
         if (PlayerAvatar == PlayeurNow && AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell1Selection())
         {
             Selection = "Spell1";
+            Spell2Button.color = Color.white;
+            Spell3Button.color = Color.white;
+            Spell4Button.color = Color.white;
+            MooveButton.color = Color.white;
             Spell1Button.color = Color.green;
         }
     }
@@ -329,6 +352,10 @@ public class Manager : MonoBehaviour
         if (PlayerAvatar == PlayeurNow && AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell2Selection())
         {
             Selection = "Spell2";
+            Spell1Button.color = Color.white;
+            Spell3Button.color = Color.white;
+            Spell4Button.color = Color.white;
+            MooveButton.color = Color.white;
             Spell2Button.color = Color.green;
         }
     }
@@ -337,6 +364,10 @@ public class Manager : MonoBehaviour
         if (PlayerAvatar == PlayeurNow && AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell3Selection())
         {
             Selection = "Spell3";
+            Spell1Button.color = Color.white;
+            Spell2Button.color = Color.white;
+            Spell4Button.color = Color.white;
+            MooveButton.color = Color.white;
             Spell3Button.color = Color.green;
         }
 
@@ -346,6 +377,10 @@ public class Manager : MonoBehaviour
         if (PlayerAvatar == PlayeurNow && AbleToDo && PlayeurNow.GetComponent<Guardian>().Spell4Selection())
         {
             Selection = "Spell4";
+            Spell1Button.color = Color.white;
+            Spell2Button.color = Color.white;
+            Spell3Button.color = Color.white;
+            MooveButton.color = Color.white;
             Spell4Button.color = Color.green;
         }
 

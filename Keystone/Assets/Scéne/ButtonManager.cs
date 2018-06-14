@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ButtonManager : MonoBehaviour
 {
@@ -12,6 +13,23 @@ public class ButtonManager : MonoBehaviour
     void Start()
     {
         DontDestroyOnLoad(gameObject);
+    }
+
+    public void IpRemplir()
+    {
+        string s = GameObject.Find("IpText").GetComponent<Text>().text;
+        if (s != "" && s.Length > 7 && s.Length <= 10)
+        {
+            GameObject.Find("Find Match").GetComponent<Button>().enabled = true;
+            if (GameObject.Find("Client"))
+            {
+                GameObject.Find("Client").GetComponent<Client>().Ip = s;
+            }
+        }
+        else
+        {
+            GameObject.Find("Find Match").GetComponent<Button>().enabled = false;
+        }
     }
 
     public void PlayBtn(string PlayScene)
@@ -30,6 +48,10 @@ public class ButtonManager : MonoBehaviour
         o.SetActive(true);
     }
 
+    public void ActivateGameObjectString(string s)
+    {
+        GameObject.Find(s).GetComponent<Image>().enabled = true;
+    }
 
 
     public void GenerateMapClient()
@@ -62,6 +84,59 @@ public class ButtonManager : MonoBehaviour
             GameObject.Find("Server").GetComponent<Server>().Ready();
         }
         GameObject.Find("Button Ready").SetActive(false);
+    }
+
+    public void SetPlayerOhnir()
+    {
+        if (GameObject.Find("Client"))
+        {
+            GameObject.Find("Client").GetComponent<Client>().me = GameObject.Find("Client").GetComponent<Client>().playerOhnir;
+            GameObject.Find("Ohnir Att").GetComponent<Image>().enabled = true;
+            GameObject.Find("Guemnnar Att").GetComponent<Image>().enabled = false;
+            GameObject.Find("Client").GetComponent<Client>().SendMeSelect("Ohnir Att", "Guemnnar Att");
+        }
+        else
+        {
+            GameObject.Find("Server").GetComponent<Server>().me = GameObject.Find("Server").GetComponent<Server>().playerOhnir;
+            GameObject.Find("Ohnir Deff").GetComponent<Image>().enabled = true;
+            GameObject.Find("Guemnnar Deff").GetComponent<Image>().enabled = false;
+            GameObject.Find("Server").GetComponent<Server>().SendMeSelect("Ohnir Deff", "Guemnnar Deff");
+
+        }
+    }
+
+    public void SetPlayerGuemnaar()
+    {
+        if (GameObject.Find("Client"))
+        {
+            GameObject.Find("Client").GetComponent<Client>().me = GameObject.Find("Client").GetComponent<Client>().playerGuemnaar;
+            GameObject.Find("Ohnir Att").GetComponent<Image>().enabled = false;
+            GameObject.Find("Guemnnar Att").GetComponent<Image>().enabled = true;
+            GameObject.Find("Client").GetComponent<Client>().SendMeSelect("Guemnnar Att", "Ohnir Att");
+        }
+        else
+        {
+            GameObject.Find("Server").GetComponent<Server>().me = GameObject.Find("Server").GetComponent<Server>().playerGuemnaar;
+            GameObject.Find("Ohnir Deff").GetComponent<Image>().enabled = false;
+            GameObject.Find("Guemnnar Deff").GetComponent<Image>().enabled = true;
+            GameObject.Find("Server").GetComponent<Server>().SendMeSelect("Guemnnar Deff", "Ohnir Deff");
+        }
+    }
+
+    public void LockPlayer()
+    {
+        if (GameObject.Find("Client") && GameObject.Find("Client").GetComponent<Client>().me)
+        {
+            GameObject.Find("Client").GetComponent<Client>().SpawnPlayer(GameObject.Find("Client").GetComponent<Client>().me, GameObject.Find("Client").GetComponent<Client>().ourClientId);
+            GameObject.Find("Client").GetComponent<Client>().SendMe();
+            PlayBtn("inGame");
+        }
+        else if (GameObject.Find("Server").GetComponent<Server>().me)
+        {
+            GameObject.Find("Server").GetComponent<Server>().SpawnPlayer(GameObject.Find("Server").GetComponent<Server>().me, GameObject.Find("Server").GetComponent<Server>().hostId);
+            GameObject.Find("Server").GetComponent<Server>().SendMe();
+            PlayBtn("inGame");
+        }
     }
 
     public void SetPlayeurGuardian(GameObject pl)

@@ -21,10 +21,10 @@ public class Server : MonoBehaviour
     private float nextUpdate = 0;
 
     private const int MAW_CONNECTION = 100;
-    private int port = 3778;
+    private int port = 7777;
 
     private int DefenderId;
-    private int hostId;
+    public int hostId;
 
     private int reliableChannel;
     private int unreliableChannel;
@@ -36,7 +36,11 @@ public class Server : MonoBehaviour
     private List<ServerClient> clients = new List<ServerClient>();
     private ServerClient ClientServer = new ServerClient();
 
-    public GameObject playerPrefab;
+    public GameObject playerOhnir;
+    public GameObject playerGuemnaar;
+
+    public GameObject me;
+
     public Dictionary<int, Player> players = new Dictionary<int, Player>();
 
     private void Start()
@@ -57,19 +61,16 @@ public class Server : MonoBehaviour
 
         ClientServer.connectionId = hostId;
         ClientServer.playerName = "Server";
-        SpawnPlayer(ClientServer.playerName, hostId);
 
     }
 
     void Update()
     {
-
+        if ( GameObject.Find("Defff")) GameObject.Find("Defff").GetComponent<Image>().enabled = true;
         if (!isStarted) return;
 
         if (!GameLunch && players.Count >= 2)
         {
-            GameObject.Find("LockAndStart").GetComponent<Image>().enabled = true;
-            GameObject.Find("LockAndStart").GetComponent<Button>().enabled = true;
             GameLunch = true;
         }
         if (GameLunch && players.Count < 2)
@@ -98,6 +99,7 @@ public class Server : MonoBehaviour
         int bufferSize = 1024;
         int dataSize;
         byte error;
+
         NetworkEventType recData = NetworkTransport.Receive(out recHostId, out connectionId, out channelId, recBuffer, bufferSize, out dataSize, out error);
         NetworkError networkError = (NetworkError)error;
         if (networkError != NetworkError.Ok)
@@ -107,8 +109,12 @@ public class Server : MonoBehaviour
         switch (recData)
         {
             case NetworkEventType.ConnectEvent:
+                GameObject.Find("LockAndStart").GetComponent<Image>().enabled = true;
+                GameObject.Find("Attt").GetComponent<Image>().enabled = true;
+                GameObject.Find("LockAndStart").GetComponent<Button>().enabled = true;
                 Debug.Log("Player" + connectionId + "has connected");
                 OnConnection(connectionId);
+
                 break;
             case NetworkEventType.DataEvent:
                 string msg = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
@@ -117,6 +123,11 @@ public class Server : MonoBehaviour
 
                 switch (splitData[0])
                 {
+                    case "Select":
+                        GameObject.Find(splitData[1]).GetComponent<Image>().enabled = true;
+                        GameObject.Find(splitData[2]).GetComponent<Image>().enabled = false;
+                        break;
+
                     case "MOOVE":
                         Moove(connectionId, splitData[1]);
                         Refresh();
@@ -146,8 +157,11 @@ public class Server : MonoBehaviour
                         GameObject.Find("Manager").GetComponent<Manager>().endNextTurn = Time.time;
                         break;
 
-                    case "NAMEIS":
-                        OnNameIs(connectionId, splitData[1]);
+                    case "Spawn":
+                        if (playerGuemnaar.name == splitData[1])
+                            SpawnPlayer(playerGuemnaar, int.Parse(splitData[2]));
+                        else if (playerOhnir.name == splitData[1])
+                            SpawnPlayer(playerOhnir, int.Parse(splitData[2]));
                         break;
 
                     case "READY":
@@ -198,17 +212,17 @@ public class Server : MonoBehaviour
         foreach (GameObject g in GameObject.FindGameObjectsWithTag("Obstacle"))
         {
             string name = "";
-            if (g.name == "dec(Clone)")
+            if (g.name == "Kayou(Clone)")
             {
-                name = "dec";
+                name = "Kayou";
             }
             else
             {
-                name = "tree";
+                name = "TREE";
             }
 
             Transform t = g.transform;
-            Send("Obstacle|" + name + "|" + t.position.x + "|" + t.position.y + "|" + t.position.z , reliableChannel, clients);
+            Send("Obstacle|" + name + "|" + t.position.x + "|" + t.position.y + "|" + t.position.z + "|" + t.rotation.x + "|" + t.rotation.y + "|" + t.rotation.z + "|" + t.localScale.x + "|" + t.localScale.y + "|" + t.localScale.z, reliableChannel, clients);
 
         }
     }
@@ -220,7 +234,7 @@ public class Server : MonoBehaviour
 
         // Tell everybody taht a new player has connected
         Send("CNN|" + playerName + '|' + cnnId, reliableChannel, clients);
-        SpawnPlayer(playerName, cnnId);
+        SpawnPlayer(me, cnnId);
     }
 
     private void OnConnection(int cnnId)
@@ -253,12 +267,18 @@ public class Server : MonoBehaviour
         Send("DC|" + cnnId, reliableChannel, clients);
     }
 
+    public  void SendMe()
+    {
+        Send("CNN|" + me.name + '|' + hostId, reliableChannel, clients);
+    }
+
     private void Send(string message, int channelId, int cnnId)
     {
         List<ServerClient> c = new List<ServerClient>();
         c.Add(clients.Find(x => x.connectionId == cnnId));
         Send(message, channelId, c);
     }
+
     private void Send(string message, int channelId, List<ServerClient> c)
     {
         byte[] msg = Encoding.Unicode.GetBytes(message);
@@ -290,13 +310,12 @@ public class Server : MonoBehaviour
         sendObstacle();
     }
 
-    private void SpawnPlayer(string playerName, int cnnId)
+    public void SpawnPlayer(GameObject playerGameObject, int cnnId)
     {
-        GameObject go = Instantiate(playerPrefab, new Vector3(2, 3, 25), new Quaternion());
+        GameObject go = Instantiate(playerGameObject, new Vector3(2, 3, 25), new Quaternion());
 
         Player p = new Player();
         p.avatar = go;
-        p.playerName = playerName;
         p.connectionId = cnnId;
 
 
@@ -407,5 +426,12 @@ public class Server : MonoBehaviour
         {
             Send("Refresh|" + i.Key + "|" + i.Value.avatar.GetComponent<Guardian>().Hp, reliableChannel, clients);
         }
+    }
+
+    
+
+    public void SendMeSelect(string s, string f)
+    {
+        Send("Select|" + s + "|" + f, reliableChannel, clients);
     }
 }

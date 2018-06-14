@@ -53,14 +53,23 @@ public class CameraInGame : MonoBehaviour
             }
             else
             {
-                alpha = 0.2f;
+                alpha = 0.15f;
                 istransparentobstacle = true;
             }
+
             foreach (GameObject g in GameObject.FindGameObjectsWithTag("Obstacle"))
             {
-                Color c = g.GetComponent<Renderer>().material.color;
-                c.a = alpha;
-                g.GetComponent<Renderer>().material.color = c;
+                Color c;
+                foreach ( var  r in g.GetComponents<Renderer>())
+                {
+                    foreach (var m in r.materials)
+                    {
+                        c = m.color;
+                        c.a = alpha;
+                        m.color = c;
+                    }
+                    
+                }
             }
 
         }
