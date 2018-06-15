@@ -15,7 +15,7 @@ public class Ohnir : Guardian
             GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
             GetComponentsInChildren<MeshRenderer>()[2].enabled = false;
             GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
-            GetComponentsInChildren<MeshRenderer>()[5].enabled = false;
+                GetComponentsInChildren<MeshRenderer>()[5].enabled = false;
             GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
             GetComponentsInChildren<MeshRenderer>()[4].enabled = true;
             return true;
@@ -93,11 +93,12 @@ public class Ohnir : Guardian
             {
                 if(g.name == ("TREE(Clone)"))
                 {
-                    Destroy(Instantiate(ExplosionArbre, g.transform), 3);
+                    GameObject.Find("Music").GetComponent<Music>().ArbreExplose();
+                    Destroy(Instantiate(ExplosionArbre, gameObject.transform.position + new Vector3(0, 1, 0), gameObject.transform.rotation), 3);
                 }
                 else
                 {
-                    Destroy(Instantiate(ExplosionRocher, g.transform), 3);
+                    Destroy(Instantiate(ExplosionRocher, gameObject.transform.position + new Vector3(0, 1, 0), gameObject.transform.rotation), 3);
                 }
                 Destroy(g);
                 
@@ -136,6 +137,7 @@ public class Ohnir : Guardian
 
         GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
 
+        GameObject.Find("Music").GetComponent<Music>().AmbianceEOhnir();
     }
     public override void Spell4Activation(Vector3 hitPoint)
     {
@@ -177,7 +179,7 @@ public class Ohnir : Guardian
         Spell1ForEndurance = 300;
         Spell2ForEndurance = 100;
         Spell3ForEndurance = 100;
-        Spell4ForEndurance = 00;
+        Spell4ForEndurance = 1000;
 
         AbleToMoove = true;
     }

@@ -16,6 +16,17 @@ public class Player
 
 public class Client : MonoBehaviour
 {
+    public GameObject spell1;
+    public GameObject spell2;
+    public GameObject spell3;
+    public GameObject spell4;
+
+
+    public Sprite Spell1G;
+    public Sprite Spell2G;
+    public Sprite Spell3G;
+    public Sprite Spell4G;
+
 
     private const int MAW_CONNECTION = 100;
     private int port = 7777;
@@ -109,7 +120,8 @@ public class Client : MonoBehaviour
                 break;
 
             case NetworkEventType.DisconnectEvent:
-                Application.Quit();
+                GameObject.Find("GameOver").GetComponent<Canvas>().enabled = true;
+                GameObject.Find("GameOver").GetComponentsInChildren<CanvasRenderer>()[2].gameObject.SetActive(false);
                 break;
 
             case NetworkEventType.DataEvent:
@@ -163,7 +175,7 @@ public class Client : MonoBehaviour
 
                     case "PASSTURN":
                         GameObject.Find("Manager").GetComponent<Manager>().endNextTurn = Time.time;
-                        if(splitData[1] == "Attacker")
+                        if (splitData[1] == "Attacker")
                         {
                             GameObject.Find("Manager").GetComponent<Manager>().PlayeurNow = GameObject.Find("Manager").GetComponent<Manager>().Attacker;
                         }
@@ -178,11 +190,13 @@ public class Client : MonoBehaviour
                         break;
 
                     case "Start":
+
                         GameObject.Find("Manager").GetComponent<Manager>().enabled = true;
                         GameObject.Find("Manager").GetComponent<Manager>().Defender = players[hostId].avatar;
                         GameObject.Find("Manager").GetComponent<Manager>().Attacker = players[this.connectionId].avatar;
-                        GameObject.Find("Manager").GetComponent<Manager>().PlayerAvatar = players[this.connectionId].avatar;
-                        GameObject.Find("Att").GetComponent<Image>().enabled = true;
+                        GameObject.Find("Manager").GetComponent<Manager>().PlayerAvatar = GameObject.Find("Manager").GetComponent<Manager>().Attacker;
+                        GameObject.Find("Manager").GetComponent<Manager>().PlayerAvatar.GetComponentsInChildren<SpriteRenderer>()[0].enabled = true;
+                        GameObject.Find("Manager").GetComponent<Manager>().PlayerAvatar.GetComponentsInChildren<SpriteRenderer>()[1].enabled = false;
 
                         foreach (KeyValuePair<int, Player> dic in players)
                         {
@@ -201,7 +215,7 @@ public class Client : MonoBehaviour
 
                     case "Obstacle":
                         ///Debug.Log(splitData[1] + splitData[2] + splitData[3] + splitData[4]);
-                        GameObject g = (GameObject) Instantiate(Resources.Load(splitData[1]), new Vector3(float.Parse(splitData[2]), float.Parse(splitData[3]), float.Parse(splitData[4])), Quaternion.Euler(float.Parse(splitData[5])-90, float.Parse(splitData[6]), float.Parse(splitData[7])));
+                        GameObject g = (GameObject)Instantiate(Resources.Load(splitData[1]), new Vector3(float.Parse(splitData[2]), float.Parse(splitData[3]), float.Parse(splitData[4])), Quaternion.Euler(float.Parse(splitData[5]) - 90, float.Parse(splitData[6]), float.Parse(splitData[7])));
                         DontDestroyOnLoad(g);
                         g.transform.localScale = new Vector3(float.Parse(splitData[8]), float.Parse(splitData[9]), float.Parse(splitData[10]));
                         g.tag = "Obstacle";
@@ -210,9 +224,16 @@ public class Client : MonoBehaviour
 
                     case "CNN":
                         if (playerGuemnaar.name == splitData[1])
-                        SpawnPlayer(playerGuemnaar, int.Parse(splitData[2]));
+                        {
+
+
+                            SpawnPlayer(playerGuemnaar, int.Parse(splitData[2]));
+
+                        }
                         else if (playerOhnir.name == splitData[1])
+                        {
                             SpawnPlayer(playerOhnir, int.Parse(splitData[2]));
+                        }
                         break;
 
                     case "DC":

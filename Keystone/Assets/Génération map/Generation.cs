@@ -547,18 +547,21 @@ public class Generation : MonoBehaviour
         sizeMapY = 40;
         fluctuation = 2;*/
 
-        //PrintTab(map);
-        string crd = MapString.ToString();
-        int index = 0;
-        //Debug.Log(crd.Length);
-        for (int i = 0; i < sizeMapX; i++)
+        //if (GameObject.Find("Server") || GameObject.Find("Client"))
         {
-            for (int j = 0; j < sizeMapY; j++)
+            //PrintTab(map);
+            string crd = MapString.ToString();
+            int index = 0;
+            //Debug.Log(crd.Length);
+            for (int i = 0; i < sizeMapX; i++)
             {
-                //Debug.Log(index +" " + crd[index] + " -48 " );
-                map[i, j] = crd[index] - 48;
-                index++;
+                for (int j = 0; j < sizeMapY; j++)
+                {
+                    //Debug.Log(index +" " + crd[index] + " -48 " );
+                    map[i, j] = crd[index] - 48;
+                    index++;
 
+                }
             }
         }
 
@@ -734,12 +737,12 @@ public class Generation : MonoBehaviour
                         {
                             if (map[xx, y - 2] == 1)
                             {
-                                DontDestroyOnLoad(Instantiate(Resources.Load("Pont 2"), new Vector3(x - 1, 0, y - 2), new Quaternion()));
-                                for (int xxx = x; xxx < xx + 2; xxx++)
+                                DontDestroyOnLoad(Instantiate(Resources.Load("Pont 2"), new Vector3(x - 1, 1, y - 2), Quaternion.Euler(-90,0,0)));
+                                for (int xxx = x-1; xxx < xx -1; xxx++)
                                 {
-                                    DontDestroyOnLoad(Instantiate(Resources.Load("pont"), new Vector3(xxx, 0, y - 2), new Quaternion()));
-                                }
-                                DontDestroyOnLoad(Instantiate(Resources.Load("Pont 2"), new Vector3(xx + 2, 0, y - 2), Quaternion.Inverse(new Quaternion())));
+                                    DontDestroyOnLoad(Instantiate(Resources.Load("pont"), new Vector3(xxx, 1, y - 2), Quaternion.Euler(-90, 0, 0)));
+                                } 
+                                DontDestroyOnLoad(Instantiate(Resources.Load("Pont 2"), new Vector3(xx + 2, 1, y - 2), Quaternion.Euler(-90, 0, 180)));
                                 xx = sizeMapX;
                             }
                         }
@@ -767,12 +770,12 @@ public class Generation : MonoBehaviour
                         {
                             if (x == 0 || map[x - 1, yy] == 1)
                             {
-                                DontDestroyOnLoad(Instantiate(Resources.Load("Pont 2"), new Vector3(x - 1, 0, y - 1), new Quaternion()));
-                                for (int yyy = y; yyy < yy + 2; yyy++)
+                                DontDestroyOnLoad(Instantiate(Resources.Load("Pont 2"), new Vector3(x - 1, 1, y - 1), Quaternion.Euler(-90, 90, 180)));
+                                for (int yyy = y + 3; yyy < yy + 3; yyy++)
                                 {
-                                    DontDestroyOnLoad(Instantiate(Resources.Load("pont"), new Vector3(x - 1, 0, yyy), new Quaternion()));
+                                    DontDestroyOnLoad(Instantiate(Resources.Load("pont"), new Vector3(x - 1, 1, yyy), Quaternion.Euler(-90, 90, 0)));
                                 }
-                                DontDestroyOnLoad(Instantiate(Resources.Load("Pont 2"), new Vector3(x - 1, 0, yy + 2), Quaternion.Inverse(new Quaternion())));
+                                DontDestroyOnLoad(Instantiate(Resources.Load("Pont 2"), new Vector3(x - 1, 1, yy + 2), Quaternion.Euler(-90, -90,180)));
                                 yy = sizeMapY;
                             }
                         }

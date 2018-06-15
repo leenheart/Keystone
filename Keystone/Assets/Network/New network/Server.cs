@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ServerClient
@@ -13,6 +14,16 @@ public class ServerClient
 
 public class Server : MonoBehaviour
 {
+    public GameObject spell1;
+    public GameObject spell2;
+    public GameObject spell3;
+    public GameObject spell4;
+
+
+    public Sprite Spell1G;
+    public Sprite Spell2G;
+    public Sprite Spell3G;
+    public Sprite Spell4G;
 
     public GameObject Map;
 
@@ -75,7 +86,8 @@ public class Server : MonoBehaviour
         }
         if (GameLunch && players.Count < 2)
         {
-            Application.Quit();
+            GameObject.Find("GameOver").GetComponent<Canvas>().enabled = true;
+            GameObject.Find("GameOver").GetComponentsInChildren<CanvasRenderer>()[2].gameObject.SetActive(false);
             //Erreur disconnect mette en pause ou quelqu chose
         }
         if (nextUpdate <= Time.time)
@@ -159,9 +171,14 @@ public class Server : MonoBehaviour
 
                     case "Spawn":
                         if (playerGuemnaar.name == splitData[1])
+                        {
                             SpawnPlayer(playerGuemnaar, int.Parse(splitData[2]));
+
+                        }
                         else if (playerOhnir.name == splitData[1])
+                        {
                             SpawnPlayer(playerOhnir, int.Parse(splitData[2]));
+                        }
                         break;
 
                     case "READY":
@@ -195,9 +212,10 @@ public class Server : MonoBehaviour
                 break;
 
             case NetworkEventType.DisconnectEvent:
+                GameObject.Find("GameOver").GetComponent<Canvas>().enabled = true;
+                GameObject.Find("GameOver").GetComponentsInChildren<CanvasRenderer>()[2].gameObject.SetActive(false);
                 Debug.Log("Player" + connectionId + "has deconnected");
                 OnDisconnection(connectionId);
-                Application.Quit();
                 break;
 
             case NetworkEventType.BroadcastEvent:

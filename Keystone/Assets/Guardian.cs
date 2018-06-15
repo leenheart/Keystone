@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public abstract class Guardian : MonoBehaviour
 {
 
-
+    public bool IsIA = false;
     public float HpMax;
     public float Hp;
     public float Endurance;
@@ -26,6 +26,7 @@ public abstract class Guardian : MonoBehaviour
 
     public GameObject ExplosionArbre;
     public GameObject ExplosionRocher;
+    public GameObject ExplosionFeu;
 
     public RectTransform HealthBar;
 
@@ -49,7 +50,7 @@ public abstract class Guardian : MonoBehaviour
                 collider.gameObject.GetComponent<Guardian>().TakeDammage(DommageTakeWhenTouchMe);
                 if (IsPuchingWhenTouchMe)
                 {
-                    Vector3 look = HitPoint - transform.position / 10;
+                    Vector3 look = HitPoint - transform.position ;
                     look.y = 2;
                     collider.gameObject.GetComponent<Rigidbody>().AddForce(look*10);
                     IsPuchingWhenTouchMe = false;
@@ -62,11 +63,13 @@ public abstract class Guardian : MonoBehaviour
             {
                 if (collider.gameObject.name == ("TREE(Clone)"))
                 {
+                   
                     Destroy(Instantiate(ExplosionArbre, collider.gameObject.transform.position + new Vector3(0,1,0), collider.gameObject.transform.rotation), 3);
+                    GameObject.Find("Music").GetComponent<Music>().ArbreExplose();
                 }
                 else
                 {
-                    Destroy(Instantiate(ExplosionRocher, collider.gameObject.transform), 3);
+                    Destroy(Instantiate(ExplosionRocher, collider.gameObject.transform.position + new Vector3(0, 1, 0), collider.gameObject.transform.rotation), 3);
                 }
                 Destroy(collider.gameObject);
             }
@@ -90,8 +93,17 @@ public abstract class Guardian : MonoBehaviour
 
         if (Hp <= 0)
         {
-            //fixme game over
-            SceneManager.LoadScene("menu");
+            if (IsIA)
+            {
+                GameObject.Find("GameOver").GetComponent<Canvas>().enabled = true;
+                GameObject.Find("GameOver").GetComponentsInChildren<CanvasRenderer>()[2].gameObject.SetActive(false);
+            }
+            else
+            {
+                GameObject.Find("GameOver").GetComponent<Canvas>().enabled = true;
+                GameObject.Find("GameOver").GetComponentsInChildren<CanvasRenderer>()[1].gameObject.SetActive(false);
+            }
+            
         }
     }
 
@@ -117,6 +129,7 @@ public abstract class Guardian : MonoBehaviour
 
     public void Update()
     {
+
         Vector3 look = Camera.main.transform.position - transform.position;
         look.y = 0;
         GetComponentsInChildren<Canvas>()[0].gameObject.transform.rotation = Quaternion.LookRotation(look);
@@ -136,7 +149,8 @@ public abstract class Guardian : MonoBehaviour
 
                 if (ExploseAtTheEndOfMove)
                 {
-
+                    Destroy(Instantiate(ExplosionFeu, transform.position, new Quaternion()), 3);
+                    gameObject.GetComponent<Collider>().enabled = true;
                     foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
                     {
                         if (g != gameObject)
@@ -156,6 +170,15 @@ public abstract class Guardian : MonoBehaviour
                     {
                         if (Manager.CalculRange(g.transform.position, transform.position) <= 5)
                         {
+                            if (g.name == ("TREE(Clone)"))
+                            {
+                                GameObject.Find("Music").GetComponent<Music>().ArbreExplose();
+                                Destroy(Instantiate(ExplosionArbre, g.transform.position + new Vector3(0, 1, 0), gameObject.transform.rotation), 3);
+                            }
+                            else
+                            {
+                                Destroy(Instantiate(ExplosionRocher, g.transform.position + new Vector3(0, 1, 0), gameObject.transform.rotation), 3);
+                            }
                             Destroy(g);
                         }
 
@@ -173,6 +196,10 @@ public abstract class Guardian : MonoBehaviour
                 if (transform.position.y > 0)
                 {
                     transform.position += transform.forward * Time.deltaTime * MoovingSpeed;
+                    if (name == "PlayerOhnir(Clone)")
+                    {
+                        GameObject.Find("Music").GetComponent<Music>().AmbiancePasRhino();
+                    }
                 }
 
             }

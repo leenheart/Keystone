@@ -33,8 +33,10 @@ public class Guemnaar : Guardian
             GetComponentsInChildren<MeshRenderer>()[2].enabled = false;
             GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
             GetComponentsInChildren<MeshRenderer>()[4].enabled = true;
+            Debug.Log(true);
             return true;
         }
+        Debug.Log(false);
         return false;
     }
 
@@ -53,8 +55,8 @@ public class Guemnaar : Guardian
 
     public override void Spell1Activation(Vector3 hitPoint)
     {
-        GetComponentsInChildren<MeshRenderer>()[2].enabled = false;
-
+        GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
+        Destroy(Instantiate(ExplosionFeu, transform.position, new Quaternion()), 3);
         foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
         {
             if (g != gameObject)
@@ -70,6 +72,15 @@ public class Guemnaar : Guardian
         {
             if (Manager.CalculRange(g.transform.position, transform.position) <= 5)
             {
+                if (g.name == ("TREE(Clone)"))
+                {
+                    GameObject.Find("Music").GetComponent<Music>().ArbreExplose();
+                    Destroy(Instantiate(ExplosionArbre, g.transform.position + new Vector3(0, 1, 0), gameObject.transform.rotation), 3);
+                }
+                else
+                {
+                    Destroy(Instantiate(ExplosionRocher, g.transform.position + new Vector3(0, 1, 0), gameObject.transform.rotation), 3);
+                }
                 Destroy(g);
             }
 
@@ -83,7 +94,7 @@ public class Guemnaar : Guardian
     public override void Spell3Activation(Vector3 hitPoint)
     {
         gameObject.GetComponent<Collider>().enabled = false;
-        GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
+        GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
 
         Vector3 look = hitPoint - transform.position;
         look.y = 0;
@@ -103,7 +114,9 @@ public class Guemnaar : Guardian
     {
         if (!GameObject.Find("Demon"))
         {
-            GameObject g = Instantiate(demon, transform);
+            
+            GameObject g = Instantiate(demon, transform.position, transform.rotation);
+            g.transform.Rotate(-90, 0, 0);
             if (GameObject.Find("Server"))
             {
                 g.GetComponentsInChildren<SpriteRenderer>()[0].enabled = false;
@@ -128,15 +141,26 @@ public class Guemnaar : Guardian
         return dommage;
     }
 
-    // Use this for initialization
     void Start()
     {
+        DontDestroyOnLoad(gameObject);
 
-    }
+        HpMax = 1000;
+        Hp = 1000;
 
-    // Update is called once per frame
-    void Update()
-    {
+        Endurance = 500;
+        EnduranceMax = 1000;
 
+        Armor = 10;
+
+        MooveRangeForEndurance = 50;
+        OneMoove = 2;
+
+        Spell1ForEndurance = 100;
+        Spell2ForEndurance = 100;
+        Spell3ForEndurance = 100;
+        Spell4ForEndurance = 100;
+
+        AbleToMoove = true;
     }
 }

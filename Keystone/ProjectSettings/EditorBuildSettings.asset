@@ -10,7 +10,7 @@ EditorBuildSettings:
     guid: b0808b4c109e6e54baefa58a020ecd9e
   - enabled: 0
     path: 
-    guid: 52ce7131741043b44ba5b0cf41c24271
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: "Assets/Sc\xE9ne/inGame.unity"
     guid: 159fd0b7f3fdb8048b8b21ea777c049d
@@ -20,3 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: "Assets/Sc\xE9ne/Serveur.unity"
     guid: f414d7cc3c08260439479c8e6e6747dc
+  - enabled: 0
+    path: "Assets/Sc\xE9ne/Lose.unity"
+    guid: b4a0c158835a0764b917cbc8b0a3d98c
+  - enabled: 0
+    path: "Assets/Sc\xE9ne/Win.unity"
+    guid: 9f94d61f77c9c494296a122b44aaab67

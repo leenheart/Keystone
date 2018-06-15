@@ -20,6 +20,8 @@ public class Manager : MonoBehaviour
     public int turn;
     public float endNextTurn;
 
+    public float SaveHp = 1000;
+
     float DiffTimeTurn;
 
     public bool AbleToDo;
@@ -38,6 +40,8 @@ public class Manager : MonoBehaviour
 
     public GameObject PlayeurNow;
 
+    public float NextBruit = 0;
+
     public float turnTime;
     public string Selection;
 
@@ -51,8 +55,8 @@ public class Manager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         Selection = "";
         turn = 0;
-        endNextTurn = turnTime;
-        PlayeurNow = Attacker;
+        endNextTurn = 0;
+        PlayeurNow = Defender;
 
         MooveButton = GameObject.Find("Button deplacement").GetComponent<Image>();
         Spell1Button = GameObject.Find("Spell 1").GetComponent<Image>();
@@ -66,6 +70,10 @@ public class Manager : MonoBehaviour
         Mana = GameObject.Find("Mana Bar").GetComponent<Image>();
         Vie = GameObject.Find("HP bar").GetComponent<Image>();
 
+        //if (PlayerAvatar.name == "PlayerOhnir(Clone)")
+        {
+            GameObject.Find("Music").GetComponent<Music>().SetMusicToOhnirDef();
+        }
     }
 
     public void PassTurn()
@@ -76,9 +84,17 @@ public class Manager : MonoBehaviour
             {
                 GameObject.Find("Client").GetComponent<Client>().PassTurn();
             }
-            else
+            else if (GameObject.Find("Server"))
             {
                 GameObject.Find("Server").GetComponent<Server>().PassTurn(GameObject.Find("Manager").GetComponent<Manager>().EstEntraindejouer());
+            }
+            else
+            {
+                //FIXME IA
+                if (PlayeurNow == PlayerAvatar)
+                {
+                    endNextTurn = Time.time;
+                }
             }
         }
     }
@@ -87,6 +103,39 @@ public class Manager : MonoBehaviour
     void Update()
     {
         //if (!isStart) return;
+
+        if (PlayeurNow.GetComponent<Guardian>().IsIA)
+        {
+            if (PlayeurNow.GetComponent<Guardian>().Endurance >= 900)
+            {
+                PlayeurNow.GetComponent<Guardian>().Spell4Activation(PlayerAvatar.transform.position);
+            }
+                else if (PlayeurNow.GetComponent<Guardian>().Endurance >= 700)
+            {
+                if(PlayerAvatar.GetComponent<Guardian>().Hp == SaveHp)
+                {
+                    int x = Random.Range(-5, 1);
+                    int y = Random.Range(-3, 3);
+                    
+                    PlayeurNow.GetComponent<Guardian>().Moove(PlayeurNow.transform.position + new Vector3(x, 0, y));
+              
+                }
+
+                PlayeurNow.GetComponent<Guardian>().Spell3Activation(PlayerAvatar.transform.position);
+                SaveHp = PlayerAvatar.GetComponent<Guardian>().Hp;
+            }
+            else
+            {
+                endNextTurn = Time.time;
+            }
+        }
+
+        if(NextBruit <= Time.time)
+        {
+            GameObject.Find("Music").GetComponent<Music>().AmbianceRhinoBruit();
+            NextBruit = Time.time + 5 + Random.Range(0, 3);
+        }
+
 
         DiffTimeTurn = endNextTurn - Time.time;
         textTimeToPlay.text = ((int)DiffTimeTurn).ToString();
@@ -113,20 +162,25 @@ PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
             }
             else if (PlayeurNow.name == "PlayerGuemnaar(Clone)")
             {
-                PlayeurNow.GetComponent<Guardian>().Hp -= 2;
-                if (GameObject.Find("Demon"))
+                PlayeurNow.GetComponent<Guardian>().TakeDammage(80);
+                if (GameObject.Find("Demon 1(Clone)"))
                 {
-                    PlayeurNow.GetComponent<Guardian>().Hp += 2;
+                    PlayeurNow.GetComponent<Guardian>().Hp += 160;
+
                     if (PlayeurNow.GetComponent<Guardian>().Hp >= PlayeurNow.GetComponent<Guardian>().HpMax)
                     {
                         PlayeurNow.GetComponent<Guardian>().Hp = PlayeurNow.GetComponent<Guardian>().HpMax;
+                        
                     }
+                    PlayeurNow.GetComponent<Guardian>().TakeDammage(0);
 
                     foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
                     {
+
                         if (g != PlayeurNow)
                         {
                                 g.GetComponent<Guardian>().TakeDammage(50);
+                            Debug.Log("Take Dommage");
                         }
                     }
                 }
@@ -190,7 +244,8 @@ PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
                 PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
                 PlayeurNow.GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
                 PlayeurNow.GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
-                PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
+                if (PlayeurNow.name == "PlayerOhnir(Clone)")
+                    PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
                 Spell1Button.color = Color.white;
                 Spell2Button.color = Color.white;
                 Spell3Button.color = Color.white;
@@ -237,7 +292,7 @@ PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
                         {
                             GameObject.Find("Client").GetComponent<Client>().Spell(hit.point, 1);
                         }
-                        else
+                        else if (GameObject.Find("Server"))
                         {
                             GameObject.Find("Server").GetComponent<Server>().Spell(hit.point, 1);
                         }
@@ -251,7 +306,7 @@ PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
                         {
                             GameObject.Find("Client").GetComponent<Client>().Spell(hit.point, 2);
                         }
-                        else
+                        else if (GameObject.Find("Server"))
                         {
                             GameObject.Find("Server").GetComponent<Server>().Spell(hit.point, 2);
                         }
@@ -265,7 +320,7 @@ PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
                         {
                             GameObject.Find("Client").GetComponent<Client>().Spell(hit.point, 3);
                         }
-                        else
+                        else if (GameObject.Find("Server"))
                         {
                             GameObject.Find("Server").GetComponent<Server>().Spell(hit.point, 3);
                         }
@@ -280,7 +335,7 @@ PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
                         {
                             GameObject.Find("Client").GetComponent<Client>().Spell(hit.point, 4);
                         }
-                        else
+                        else if (GameObject.Find("Server"))
                         {
                             GameObject.Find("Server").GetComponent<Server>().Spell(hit.point, 4);
                         }
@@ -299,7 +354,7 @@ PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
                             {
                                 GameObject.Find("Client").GetComponent<Client>().Moove(hit.point);
                             }
-                            else
+                            else if (GameObject.Find("Server"))
                             {
                                 GameObject.Find("Server").GetComponent<Server>().Moove(hit.point);
                             }
@@ -307,6 +362,7 @@ PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
                         PlayeurNow.GetComponentsInChildren<MeshRenderer>()[1].enabled = false;
                         PlayeurNow.GetComponentsInChildren<MeshRenderer>()[3].enabled = false;
                         PlayeurNow.GetComponentsInChildren<MeshRenderer>()[4].enabled = false;
+                        if(PlayeurNow.name == "PlayerOhnir(Clone)")
                         PlayeurNow.GetComponentsInChildren<MeshRenderer>()[6].enabled = false;
                         MooveButton.color = Color.white;
                         Selection = "";

@@ -24,9 +24,13 @@ public class CameraInGame : MonoBehaviour
         {
             GameObject.Find("CanvasDef").SetActive(false);
         }
-        else
+        else if (GameObject.Find("Server"))
         {
             GameObject.Find("CanvasAtt").SetActive(false);
+        }
+        else
+        {
+            GameObject.Find("CanvasDef").SetActive(false);
         }
 
     }
@@ -34,13 +38,27 @@ public class CameraInGame : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ButtonManager.Restart();
+        }
+            if (Input.GetKeyDown(KeyCode.P))
         {
             foreach (GameObject g in GameObject.FindGameObjectsWithTag("pont")) Destroy(g);
             foreach (GameObject g in GameObject.FindGameObjectsWithTag("Obstacle")) Destroy(g);
-            GameObject.Find("MapGeneration 1").GetComponent<Generation>().Generate();
-            GameObject.Find("MapGeneration 1").GetComponent<Generation>().generateObstacle();
-            GameObject.Find("MapGeneration 1").GetComponent<Generation>().GenerateMap();
+            if (GameObject.Find("MapGeneration 1"))
+            {
+                GameObject.Find("MapGeneration 1").GetComponent<Generation>().Generate();
+                GameObject.Find("MapGeneration 1").GetComponent<Generation>().generateObstacle();
+                GameObject.Find("MapGeneration 1").GetComponent<Generation>().GenerateMap();
+            }
+            else
+            {
+                GameObject.Find("MapGeneration 1(Clone)").GetComponent<Generation>().Generate();
+                GameObject.Find("MapGeneration 1(Clone)").GetComponent<Generation>().generateObstacle();
+                GameObject.Find("MapGeneration 1(Clone)").GetComponent<Generation>().GenerateMap();
+            }
+           
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
